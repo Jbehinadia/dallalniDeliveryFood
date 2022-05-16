@@ -1,0 +1,32 @@
+{
+  "applications": "*",
+  "changelogDate": "20220516214144",
+  "dto": "mapstruct",
+  "embedded": false,
+  "entityTableName": "type_plat",
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "imagePath",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "TypePlat",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "plat",
+      "otherEntityRelationshipName": "typePlat",
+      "relationshipName": "plat",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}
