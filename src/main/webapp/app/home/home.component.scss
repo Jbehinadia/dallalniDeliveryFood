@@ -15,11 +15,7 @@ body {
 }
 
 .restaurant-panel {
-  display: grid;
-  width: 75%;
-  row-gap: 72px;
-  padding: 45px 80px;
-  border-right: 1px solid rgb(248, 248, 247);
+  margin-bottom: 40px;
 }
 
 .nav-bar {
@@ -70,6 +66,7 @@ body {
   border-radius: 15px;
   white-space: nowrap;
   box-shadow: 0px 12px 18px rgb(0 0 0 / 16%);
+  margin-bottom: 20px;
 
   .delivery {
     position: absolute;
@@ -111,7 +108,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 60px;
+    margin-bottom: 10px;
 
     .section-title {
       font-size: 21px;
@@ -119,8 +116,8 @@ body {
     }
     .btn-Delivery {
       color: white;
-      background-color: rgb(250, 83, 24);
-      border: 1px solid rgb(250, 83, 24);
+      background-color: #fba374;
+      border: 1px solid #fba374;
       border-radius: 30px;
     }
   }
@@ -143,10 +140,11 @@ body {
 }
 
 .categories {
-  display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0px 12px 18px rgb(0 0 0 / 16%);
+  margin-bottom: 20px;
+  border-radius: 15px;
 }
 
 .category-list {
@@ -157,14 +155,12 @@ body {
 
   .item {
     box-sizing: border-box;
-    width: 72px;
+    width: 100px;
     padding: 6px;
-    border-radius: 36px;
+    border-radius: 15px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
     transition: 0.3s;
-    &:not(:last-child) {
-      margin-right: 18px;
-    }
+    margin: 10px;
 
     a {
       display: flex;
@@ -207,6 +203,9 @@ body {
   }
 }
 
+.category-more {
+  align-self: center;
+}
 .category-more-btn {
   display: flex;
   justify-content: center;
@@ -214,8 +213,9 @@ body {
   padding: 10px;
   border-radius: 15px;
   color: white;
-  background-color: rgb(248, 248, 247);
-  border: 1px solid rgb(248, 248, 247);
+  background-color: white;
+  border: none;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 5%);
 }
 
 .restaurant-list {
@@ -262,9 +262,9 @@ body {
 }
 
 .order-panel {
-  padding: 56px 50px 42px 48px;
-  background: rgb(255 247 237);
-  border-radius: 5% 0 0 5%;
+  padding: 30px;
+  background: #fba374;
+  border-radius: 15px 0 0 0;
   box-shadow: 0px 12px 18px rgb(0 0 0 / 16%);
 }
 
@@ -358,14 +358,6 @@ body {
   .item {
     display: grid;
     align-items: center;
-
-    &:not(:last-child) {
-      grid-template-columns: 78px 20px 106px 1fr;
-    }
-
-    &:last-child {
-      grid-template-columns: 78px 20px 1fr;
-    }
 
     .food-image {
       width: 57px;
