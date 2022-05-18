@@ -38,6 +38,19 @@ export class TypePlatUpdateComponent implements OnInit {
     });
   }
 
+  uploadFile(event: any): any {
+    const reader = new FileReader();
+    const file = event.target!.files[0];
+    if (event.target!.files && event.target.files[0]) {
+      reader.readAsDataURL(file);
+
+      // When file uploads push it to file list
+      reader.onload = () => {
+        this.editForm.controls['imagePath'].setValue(reader.result!.toString());
+      };
+    }
+  }
+
   byteSize(base64String: string): string {
     return this.dataUtils.byteSize(base64String);
   }
