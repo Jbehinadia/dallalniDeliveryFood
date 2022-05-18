@@ -12,6 +12,7 @@ export interface IPlat {
   commandeDetails?: ICommandeDetails[] | null;
   menu?: IMenu | null;
   typePlat?: ITypePlat | null;
+  nomRestau?: string | null; // local
 }
 
 export class Plat implements IPlat {

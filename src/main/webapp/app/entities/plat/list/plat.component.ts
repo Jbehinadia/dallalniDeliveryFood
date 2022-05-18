@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IPlat } from '../plat.model';
@@ -10,6 +10,12 @@ import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants
 import { PlatService } from '../service/plat.service';
 import { PlatDeleteDialogComponent } from '../delete/plat-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
+import { MenuService } from 'app/entities/menu/service/menu.service';
+import { RestaurantService } from 'app/entities/restaurant/service/restaurant.service';
+import { IMenu } from 'app/entities/menu/menu.model';
+import { Restaurant } from 'app/entities/restaurant/restaurant.model';
+import { TypePlatService } from 'app/entities/type-plat/service/type-plat.service';
+import { TypePlat } from 'app/entities/type-plat/type-plat.model';
 
 @Component({
   selector: 'jhi-plat',
@@ -27,6 +33,9 @@ export class PlatComponent implements OnInit {
 
   constructor(
     protected platService: PlatService,
+    protected typePlatService: TypePlatService,
+    protected menuService: MenuService,
+    protected restaurantService: RestaurantService,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: DataUtils,
     protected router: Router,
@@ -118,6 +127,22 @@ export class PlatComponent implements OnInit {
       });
     }
     this.plats = data ?? [];
+    this.plats.forEach(plat => {
+      if (plat.typePlat!.id) {
+        this.typePlatService.find(plat.typePlat!.id).subscribe((resType: HttpResponse<TypePlat>) => {
+          plat.typePlat!.type = resType.body?.type;
+        });
+      }
+
+      this.menuService.find(plat.menu!.id!).subscribe((resMenu: HttpResponse<IMenu>) => {
+        plat.menu!.nomMenu = resMenu.body!.nomMenu;
+        if (resMenu.body!.restaurant!.id) {
+          this.restaurantService.find(resMenu.body!.restaurant!.id).subscribe((resRestau: HttpResponse<Restaurant>) => {
+            plat.nomRestau = resRestau.body?.nomRestaurant;
+          });
+        }
+      });
+    });
     this.ngbPaginationPage = this.page;
   }
 

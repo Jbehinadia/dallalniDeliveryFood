@@ -14,6 +14,8 @@ import { IMenu } from 'app/entities/menu/menu.model';
 import { MenuService } from 'app/entities/menu/service/menu.service';
 import { ITypePlat } from 'app/entities/type-plat/type-plat.model';
 import { TypePlatService } from 'app/entities/type-plat/service/type-plat.service';
+import { RestaurantService } from 'app/entities/restaurant/service/restaurant.service';
+import { Restaurant } from 'app/entities/restaurant/restaurant.model';
 
 @Component({
   selector: 'jhi-plat-update',
@@ -41,6 +43,7 @@ export class PlatUpdateComponent implements OnInit {
     protected eventManager: EventManager,
     protected platService: PlatService,
     protected menuService: MenuService,
+    protected restaurantService: RestaurantService,
     protected typePlatService: TypePlatService,
     protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
@@ -52,6 +55,19 @@ export class PlatUpdateComponent implements OnInit {
 
       this.loadRelationshipsOptions();
     });
+  }
+
+  uploadFile(event: any): any {
+    const reader = new FileReader();
+    const file = event.target!.files[0];
+    if (event.target!.files && event.target.files[0]) {
+      reader.readAsDataURL(file);
+
+      // When file uploads push it to file list
+      reader.onload = () => {
+        this.editForm.controls['imagePath'].setValue(reader.result!.toString());
+      };
+    }
   }
 
   byteSize(base64String: string): string {
@@ -131,7 +147,16 @@ export class PlatUpdateComponent implements OnInit {
       .query()
       .pipe(map((res: HttpResponse<IMenu[]>) => res.body ?? []))
       .pipe(map((menus: IMenu[]) => this.menuService.addMenuToCollectionIfMissing(menus, this.editForm.get('menu')!.value)))
-      .subscribe((menus: IMenu[]) => (this.menusSharedCollection = menus));
+      .subscribe((menus: IMenu[]) => {
+        this.menusSharedCollection = menus;
+        this.menusSharedCollection.forEach(menu => {
+          if (menu.restaurant!.id) {
+            this.restaurantService.find(menu.restaurant!.id).subscribe((resRestau: HttpResponse<Restaurant>) => {
+              menu.restaurant = resRestau.body;
+            });
+          }
+        });
+      });
 
     this.typePlatService
       .query()
