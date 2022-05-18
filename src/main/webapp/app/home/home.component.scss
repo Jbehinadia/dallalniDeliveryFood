@@ -142,7 +142,7 @@ body {
 .categories {
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0px 12px 18px rgb(0 0 0 / 16%);
+  box-shadow: 1px 6px 10px 1px rgb(0 0 0 / 16%);
   margin-bottom: 20px;
   border-radius: 15px;
 }
@@ -188,7 +188,7 @@ body {
 
     .category-name {
       padding: 9px 0 36px 0;
-      font-size: 10px;
+      font-size: 16px;
       font-weight: bold;
       color: black;
     }
@@ -234,12 +234,11 @@ body {
     }
 
     .restaurant-name {
-      margin-top: 27px;
+      font-size: 18px;
     }
 
     .restaurant-info {
-      margin-top: 12px;
-      font-size: 10px;
+      font-size: 16px;
     }
 
     .restaurant-rate {
@@ -262,7 +261,7 @@ body {
 }
 
 .order-panel {
-  padding: 30px;
+  padding: 20px;
   background: #fba374;
   border-radius: 15px 0 0 0;
   box-shadow: 0px 12px 18px rgb(0 0 0 / 16%);
@@ -294,9 +293,9 @@ body {
 }
 
 .order-info {
-  width: 240px;
+  width: 100%;
   margin-top: 44px;
-  padding: 27px 24px 24px 24px;
+  padding: 24px;
   color: white;
   background: rgb(80, 62, 157);
   border-radius: 15px;
@@ -347,16 +346,15 @@ body {
 }
 
 .food-list {
-  display: grid;
   row-gap: 33px;
   padding: 0;
   margin: 54px 0 0 0;
-  font-size: 10px;
+  font-size: 16px;
   font-weight: bold;
   list-style-type: none;
 
   .item {
-    display: grid;
+    display: flex;
     align-items: center;
 
     .food-image {
@@ -393,7 +391,7 @@ body {
   border-top: 2px solid rgb(248, 248, 247);
 
   .persons {
-    font-size: 10px;
+    font-size: 16px;
     font-weight: bold;
   }
 
