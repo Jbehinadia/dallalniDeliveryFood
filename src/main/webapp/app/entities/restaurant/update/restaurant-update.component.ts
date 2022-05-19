@@ -32,7 +32,7 @@ export class RestaurantUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ restaurant }) => {
       if (restaurant.id === undefined) {
-        const today = dayjs().startOf('day');
+        const today = dayjs();
         restaurant.dateOuverture = today;
         restaurant.dateFermiture = today;
       }
@@ -48,6 +48,8 @@ export class RestaurantUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const restaurant = this.createFromForm();
+    restaurant.dateOuverture = dayjs(restaurant.dateFermiture);
+    restaurant.dateFermiture = dayjs(restaurant.dateFermiture);
     if (restaurant.id !== undefined) {
       this.subscribeToSaveResponse(this.restaurantService.update(restaurant));
     } else {

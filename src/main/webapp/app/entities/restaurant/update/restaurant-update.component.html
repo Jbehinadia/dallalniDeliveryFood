@@ -1,18 +1,12 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-restaurant-heading" data-cy="RestaurantCreateUpdateHeading">Create or edit a Restaurant</h2>
+      <h2 id="jhi-restaurant-heading" data-cy="RestaurantCreateUpdateHeading" *ngIf="!editForm.get('id')!.value">Ajouter un Restaurant</h2>
+      <h2 id="jhi-restaurant-heading" data-cy="RestaurantCreateUpdateHeading" *ngIf="editForm.get('id')!.value">Modifier Restaurant</h2>
 
       <div>
-        <jhi-alert-error></jhi-alert-error>
-
-        <div class="row mb-3" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-label" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
         <div class="row mb-3">
-          <label class="form-label" for="field_nomRestaurant">Nom Restaurant</label>
+          <label class="form-label" for="field_nomRestaurant">Nom</label>
           <input
             type="text"
             class="form-control"
@@ -24,7 +18,7 @@
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" for="field_adresseRestaurant">Adresse Restaurant</label>
+          <label class="form-label" for="field_adresseRestaurant">Adresse</label>
           <input
             type="text"
             class="form-control"
@@ -36,7 +30,7 @@
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" for="field_numRestaurant">Num Restaurant</label>
+          <label class="form-label" for="field_numRestaurant">Numero</label>
           <input
             type="text"
             class="form-control"
@@ -48,31 +42,31 @@
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" for="field_dateOuverture">Date Ouverture</label>
+          <label class="form-label" for="field_dateOuverture">Heure Ouverture</label>
           <div class="d-flex">
             <input
               id="field_dateOuverture"
               data-cy="dateOuverture"
-              type="datetime-local"
+              type="time"
               class="form-control"
               name="dateOuverture"
               formControlName="dateOuverture"
-              placeholder="YYYY-MM-DD HH:mm"
+              placeholder="HH:mm"
             />
           </div>
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" for="field_dateFermiture">Date Fermiture</label>
+          <label class="form-label" for="field_dateFermiture">Heure Fermiture</label>
           <div class="d-flex">
             <input
               id="field_dateFermiture"
               data-cy="dateFermiture"
-              type="datetime-local"
+              type="time"
               class="form-control"
               name="dateFermiture"
               formControlName="dateFermiture"
-              placeholder="YYYY-MM-DD HH:mm"
+              placeholder="HH:mm"
             />
           </div>
         </div>
@@ -80,7 +74,7 @@
 
       <div>
         <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+          <fa-icon icon="ban"></fa-icon>
         </button>
 
         <button
@@ -88,9 +82,9 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          class="btn btn-success text-white"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+          <fa-icon icon="save"></fa-icon>
         </button>
       </div>
     </form>
