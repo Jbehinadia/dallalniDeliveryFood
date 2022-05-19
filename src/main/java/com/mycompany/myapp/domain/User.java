@@ -2,7 +2,6 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mycompany.myapp.config.Constants;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Locale;
@@ -21,7 +20,7 @@ import org.springframework.data.relational.core.mapping.Table;
  * A user.
  */
 @Table("jhi_user")
-public class User extends AbstractAuditingEntity implements Serializable {
+public class User extends AbstractAuditingEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -78,6 +77,15 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @JsonIgnore
     @Transient
     private Set<Authority> authorities = new HashSet<>();
+
+    @Column("responsable")
+    private Long responsable;
+
+    @Column("livreur")
+    private Long livreur;
+
+    @Column("client")
+    private Long client;
 
     public Long getId() {
         return id;
@@ -184,6 +192,30 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.authorities = authorities;
     }
 
+    public Long getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(Long responsable) {
+        this.responsable = responsable;
+    }
+
+    public Long getLivreur() {
+        return livreur;
+    }
+
+    public void setLivreur(Long livreur) {
+        this.livreur = livreur;
+    }
+
+    public Long getClient() {
+        return client;
+    }
+
+    public void setClient(Long client) {
+        this.client = client;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -213,6 +245,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +
             ", activationKey='" + activationKey + '\'' +
+            ", responsable='" + responsable + '\'' +
+            ", livreur='" + livreur + '\'' +
+            ", client='" + client + '\'' +
             "}";
     }
 }

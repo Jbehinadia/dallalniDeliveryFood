@@ -119,6 +119,9 @@ public class UserService {
                     newUser.setPassword(encryptedPassword);
                     newUser.setFirstName(userDTO.getFirstName());
                     newUser.setLastName(userDTO.getLastName());
+                    newUser.setResponsable(userDTO.getResponsable());
+                    newUser.setLivreur(userDTO.getLivreur());
+                    newUser.setClient(userDTO.getClient());
                     if (userDTO.getEmail() != null) {
                         newUser.setEmail(userDTO.getEmail().toLowerCase());
                     }
@@ -149,6 +152,9 @@ public class UserService {
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
+        user.setResponsable(userDTO.getResponsable());
+        user.setLivreur(userDTO.getLivreur());
+        user.setClient(userDTO.getClient());
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail().toLowerCase());
         }
@@ -190,6 +196,9 @@ public class UserService {
                 user.setLogin(userDTO.getLogin().toLowerCase());
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
+                user.setResponsable(userDTO.getResponsable());
+                user.setLivreur(userDTO.getLivreur());
+                user.setClient(userDTO.getClient());
                 if (userDTO.getEmail() != null) {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
@@ -224,19 +233,34 @@ public class UserService {
      *
      * @param firstName first name of user.
      * @param lastName  last name of user.
+     * @param responsable first name of user.
+     * @param livreur first name of user.
+     * @param client first name of user.
      * @param email     email id of user.
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      * @return a completed {@link Mono}.
      */
     @Transactional
-    public Mono<Void> updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public Mono<Void> updateUser(
+        String firstName,
+        String lastName,
+        Long responsable,
+        Long livreur,
+        Long client,
+        String email,
+        String langKey,
+        String imageUrl
+    ) {
         return SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .flatMap(user -> {
                 user.setFirstName(firstName);
                 user.setLastName(lastName);
+                user.setResponsable(responsable);
+                user.setLivreur(livreur);
+                user.setClient(client);
                 if (email != null) {
                     user.setEmail(email.toLowerCase());
                 }

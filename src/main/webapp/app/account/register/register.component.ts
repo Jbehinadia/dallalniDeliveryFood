@@ -21,6 +21,8 @@ export class RegisterComponent implements AfterViewInit {
   success = false;
 
   registerForm = this.fb.group({
+    firstName: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(254)]],
+    lastName: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(254)]],
     login: [
       '',
       [
@@ -33,6 +35,9 @@ export class RegisterComponent implements AfterViewInit {
     email: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(254), Validators.email]],
     password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
     confirmPassword: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+    responsable: [],
+    livreur: [],
+    client: [],
   });
 
   constructor(private registerService: RegisterService, private fb: FormBuilder) {}
@@ -54,9 +59,14 @@ export class RegisterComponent implements AfterViewInit {
       this.doNotMatch = true;
     } else {
       const login = this.registerForm.get(['login'])!.value;
+      const firstName = this.registerForm.get(['firstName'])!.value;
+      const lastName = this.registerForm.get(['lastName'])!.value;
       const email = this.registerForm.get(['email'])!.value;
+      const responsable = this.registerForm.get(['responsable'])!.value;
+      const livreur = this.registerForm.get(['livreur'])!.value;
+      const client = this.registerForm.get(['client'])!.value;
       this.registerService
-        .save({ login, email, password, langKey: 'en' })
+        .save({ login, firstName, lastName, email, password, responsable, livreur, client, langKey: 'en' })
         .subscribe({ next: () => (this.success = true), error: response => this.processError(response) });
     }
   }

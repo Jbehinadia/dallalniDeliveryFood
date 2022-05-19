@@ -48,6 +48,12 @@ public class AdminUserDTO {
 
     private Set<String> authorities;
 
+    private Long responsable;
+
+    private Long livreur;
+
+    private Long client;
+
     public AdminUserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -66,6 +72,9 @@ public class AdminUserDTO {
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
         this.authorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+        this.responsable = user.getResponsable();
+        this.livreur = user.getLivreur();
+        this.client = user.getClient();
     }
 
     public Long getId() {
@@ -172,12 +181,39 @@ public class AdminUserDTO {
         this.authorities = authorities;
     }
 
+    public Long getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(Long responsable) {
+        this.responsable = responsable;
+    }
+
+    public Long getLivreur() {
+        return livreur;
+    }
+
+    public void setLivreur(Long livreur) {
+        this.livreur = livreur;
+    }
+
+    public Long getClient() {
+        return client;
+    }
+
+    public void setClient(Long client) {
+        this.client = client;
+    }
+
     // prettier-ignore
     @Override
     public String toString() {
         return "AdminUserDTO{" +
             "login='" + login + '\'' +
             ", firstName='" + firstName + '\'' +
+            ", responsable='" + responsable + '\'' +
+            ", livreur='" + livreur + '\'' +
+            ", client='" + client + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
