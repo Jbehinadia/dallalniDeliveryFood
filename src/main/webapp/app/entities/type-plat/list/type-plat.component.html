@@ -3,14 +3,14 @@
     <span>Type Plats</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="loadPage()" [disabled]="isLoading">
+      <button class="btn btn-info me-2 text-white" (click)="loadPage()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-type-plat"
+        class="btn btn-primary jh-create-entity create-type-plat text-white"
         [routerLink]="['/type-plat/new']"
       >
         <fa-icon icon="plus"></fa-icon>
@@ -19,7 +19,7 @@
   </h2>
 
   <div class="alert alert-warning" id="no-result" *ngIf="typePlats?.length === 0">
-    <span>Aucun typePlats trouvé</span>
+    <span>Aucun type Plats trouvé</span>
   </div>
 
   <div class="table-responsive" id="entities" *ngIf="typePlats && typePlats.length > 0">
@@ -27,7 +27,7 @@
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
           <th scope="col" jhiSortBy="type"><span>Type</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="imagePath"><span>Image</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col"><span>Image</span></th>
           <th scope="col"></th>
         </tr>
       </thead>

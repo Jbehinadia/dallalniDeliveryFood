@@ -1,7 +1,8 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-plat-heading" data-cy="PlatCreateUpdateHeading">Create or edit a Plat</h2>
+      <h2 id="jhi-plat-heading" data-cy="PlatCreateUpdateHeading" *ngIf="!editForm.get('id')!.value">Ajout un plat</h2>
+      <h2 id="jhi-plat-heading" data-cy="PlatCreateUpdateHeading" *ngIf="editForm.get('id')!.value">Modifier un plat</h2>
 
       <div>
         <div class="row mb-3">
@@ -33,7 +34,7 @@
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" for="field_remisePerc">Remise Perc</label>
+          <label class="form-label" for="field_remisePerc">Remise %</label>
           <input
             type="number"
             class="form-control"
@@ -52,7 +53,7 @@
               [ngValue]="menu.id === editForm.get('menu')!.value?.id ? editForm.get('menu')!.value : menu"
               *ngFor="let menu of menusSharedCollection; trackBy: trackMenuById"
             >
-              {{ menu.restaurant!.nomRestaurant }} - {{ menu.nomMenu }}
+              {{ menu.nomRestau! }} - {{ menu.nomMenu! }}
             </option>
           </select>
         </div>
@@ -74,7 +75,7 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary text-white"
+          class="btn btn-success text-white"
         >
           <fa-icon icon="save"></fa-icon>
         </button>

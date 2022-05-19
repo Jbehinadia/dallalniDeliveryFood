@@ -152,7 +152,9 @@ export class PlatUpdateComponent implements OnInit {
         this.menusSharedCollection.forEach(menu => {
           if (menu.restaurant!.id) {
             this.restaurantService.find(menu.restaurant!.id).subscribe((resRestau: HttpResponse<Restaurant>) => {
-              menu.restaurant = resRestau.body;
+              if (resRestau.body) {
+                menu.nomRestau = resRestau.body.nomRestaurant;
+              }
             });
           }
         });

@@ -6,6 +6,7 @@ export interface IMenu {
   nomMenu?: string | null;
   plats?: IPlat[] | null;
   restaurant?: IRestaurant | null;
+  nomRestau?: string | null; // Local
 }
 
 export class Menu implements IMenu {
