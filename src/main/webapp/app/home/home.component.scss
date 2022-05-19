@@ -231,10 +231,14 @@ body {
       width: 250px;
       height: 125px;
       border-radius: 15px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     .restaurant-name {
       font-size: 18px;
+      font-weight: 600;
     }
 
     .restaurant-info {
