@@ -118,7 +118,7 @@
     </section>
     <section class="section">
       <ul class="restaurant-list">
-        <li class="restaurant-list item" *ngFor="let plat of Plats">
+        <li class="restaurant-list item" *ngFor="let plat of Plats" (click)="addLineCmd(plat)">
           <a href="#">
             <div class="col-md-2 restaurant-image" [style.backgroundImage]="'url(' + plat.imagePath + ')'"></div>
           </a>
@@ -209,11 +209,13 @@
           </div>
         </div>
         <ul class="food-list">
-          <li class="row food-list item">
-            <img class="col-md-2 food-image" src="https://i.loli.net/2020/04/06/7oZgORNCnGE5qhU.png" />
-            <div class="col-md-2 food-buy-amount">1 x</div>
-            <div class="col-md-6 food-name">Beach BBQBurger</div>
-            <div class="col-md-2 food-price text-nowrap">$14.99</div>
+          <li class="row food-list item" *ngFor="let line of linesCmd">
+            <div class="col-md-2 food-image" [style.backgroundImage]="'url(' + line.plat!.imagePath + ')'"></div>
+            <div class="col-md-2 food-buy-amount">{{ line.qte }} x</div>
+            <div class="col-md-6 food-name">{{ line.plat!.nomPlat }}</div>
+            <div class="col-md-2 food-price text-nowrap">
+              <span>{{ line.prix }} DT</span>
+            </div>
           </li>
         </ul>
         <div class="total-price">

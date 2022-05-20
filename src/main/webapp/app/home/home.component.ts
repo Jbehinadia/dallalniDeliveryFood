@@ -14,6 +14,8 @@ import { MenuService } from 'app/entities/menu/service/menu.service';
 import { IMenu } from 'app/entities/menu/menu.model';
 import { RestaurantService } from 'app/entities/restaurant/service/restaurant.service';
 import { Restaurant } from 'app/entities/restaurant/restaurant.model';
+import { ICommande } from 'app/entities/commande/commande.model';
+import { ICommandeDetails } from 'app/entities/commande-details/commande-details.model';
 
 @Component({
   selector: 'jhi-home',
@@ -26,6 +28,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   typePlats?: ITypePlat[] = [];
   originPlats?: IPlat[] = [];
   Plats?: IPlat[] = [];
+  commande?: ICommande = {};
+  linesCmd?: ICommandeDetails[] = [];
 
   private readonly destroy$ = new Subject<void>();
 
@@ -44,9 +48,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => {
         this.account = account;
-        this.getTypePlats();
-        this.getAllPlats();
       });
+    this.totalCommande = 0;
+    this.getTypePlats();
+    this.getAllPlats();
   }
 
   getAllPlats(): void {
@@ -91,5 +96,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (typeID) {
       this.Plats = this.Plats?.filter(plat => plat.typePlat?.id === typeID);
     }
+  }
+
+  addLineCmd(plat: IPlat): void {
+    this.totalCommande = 0;
+    const index = this.linesCmd!.findIndex(lineC => lineC.plat!.id === plat.id);
+    if (index === -1) {
+      const newLine: ICommandeDetails = {};
+      newLine.plat = plat;
+      newLine.qte = 1;
+      newLine.prix = plat.remisePerc ? plat.prix! - (plat.prix! * plat.remisePerc) / 100 : plat.prix;
+      this.linesCmd!.push(newLine);
+    } else {
+      const line = this.linesCmd!.find(lineC => lineC.plat!.id === plat.id);
+      line!.qte! += 1;
+      line!.prix = line!.prix! * line!.qte!;
+    }
+
+    this.linesCmd!.forEach(lineC => {
+      this.totalCommande += lineC.prix!;
+    });
   }
 }

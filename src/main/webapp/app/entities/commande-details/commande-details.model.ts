@@ -7,6 +7,7 @@ export interface ICommandeDetails {
   etat?: string | null;
   commande?: ICommande | null;
   plat?: IPlat | null;
+  qte?: number;
 }
 
 export class CommandeDetails implements ICommandeDetails {
