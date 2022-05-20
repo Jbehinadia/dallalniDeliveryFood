@@ -35,7 +35,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let commandeDetails of commandeDetails; trackBy: trackId" data-cy="entityTable">
-          <td>{{ commandeDetails.prix }}</td>
+          <td>
+            <span>{{ commandeDetails.prix }}DT</span>
+          </td>
           <td>{{ commandeDetails.etat }}</td>
           <td>
             <div *ngIf="commandeDetails.commande">
