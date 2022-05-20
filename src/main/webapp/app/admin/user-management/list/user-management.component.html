@@ -3,51 +3,41 @@
     <span id="user-management-page-heading" data-cy="userManagementPageHeading">Users</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="loadAll()" [disabled]="isLoading">
+      <button class="btn btn-info me-2 text-white" (click)="loadAll()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span>Refresh List</span>
       </button>
-      <button class="btn btn-primary jh-create-entity" [routerLink]="['./new']">
-        <fa-icon icon="plus"></fa-icon> <span>Create a new User</span>
+      <button class="btn btn-primary jh-create-entity text-white" [routerLink]="['./new']">
+        <fa-icon icon="plus"></fa-icon>
       </button>
     </div>
   </h2>
-
-  <jhi-alert-error></jhi-alert-error>
-
-  <jhi-alert></jhi-alert>
-
   <div class="table-responsive" *ngIf="users">
     <table class="table table-striped" aria-describedby="user-management-page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="transition()">
-          <th scope="col" jhiSortBy="id"><span>ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="login"><span>Login</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="login"><span>Connexion</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="email"><span>Email</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col"></th>
           <th scope="col"><span>Profiles</span></th>
-          <th scope="col" jhiSortBy="createdDate"><span>Created Date</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="lastModifiedBy"><span>Last Modified By</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="lastModifiedDate"><span>Last Modified Date</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="createdDate"><span>Date de création</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="lastModifiedBy"><span>Modifié en dernier lieu par</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="lastModifiedDate"><span>Date de dernière modification</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody *ngIf="users">
         <tr *ngFor="let user of users; trackBy: trackIdentity">
-          <td>
-            <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>
-          </td>
           <td>{{ user.login }}</td>
           <td>{{ user.email }}</td>
           <td>
-            <button class="btn btn-danger btn-sm" (click)="setActive(user, true)" *ngIf="!user.activated">Deactivated</button>
+            <button class="btn btn-danger btn-sm" (click)="setActive(user, true)" *ngIf="!user.activated">Deactivé</button>
             <button
               class="btn btn-success btn-sm"
               (click)="setActive(user, false)"
               *ngIf="user.activated"
               [disabled]="!currentAccount || currentAccount.login === user.login"
             >
-              Activated
+              Activé
             </button>
           </td>
           <td>
@@ -60,24 +50,26 @@
           <td>{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</td>
           <td class="text-end">
             <div class="btn-group">
-              <button type="submit" [routerLink]="['./', user.login, 'view']" class="btn btn-info btn-sm">
+              <button type="submit" [routerLink]="['./', user.login, 'view']" class="btn btn-info btn-sm text-white">
                 <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline">View</span>
               </button>
 
-              <button type="submit" [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge" class="btn btn-primary btn-sm">
+              <button
+                type="submit"
+                [routerLink]="['./', user.login, 'edit']"
+                queryParamsHandling="merge"
+                class="btn btn-primary btn-sm text-white"
+              >
                 <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline">Edit</span>
               </button>
 
               <button
                 type="button"
                 (click)="deleteUser(user)"
-                class="btn btn-danger btn-sm"
+                class="btn btn-danger btn-sm text-white"
                 [disabled]="!currentAccount || currentAccount.login === user.login"
               >
                 <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline">Delete</span>
               </button>
             </div>
           </td>
