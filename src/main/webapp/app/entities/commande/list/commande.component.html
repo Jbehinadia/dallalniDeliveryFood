@@ -47,7 +47,9 @@
           <td>{{ commande.adresseCommande }}</td>
           <td>{{ commande.etat }}</td>
           <td>{{ commande.dateCommande | formatMediumDatetime }}</td>
-          <td>{{ commande.prixTotal }}</td>
+          <td>
+            <span>{{ commande.prixTotal }}DT</span>
+          </td>
           <td>{{ commande.remisePerc }}</td>
           <td>{{ commande.remiceVal }}</td>
           <td>{{ commande.prixLivreson }}</td>

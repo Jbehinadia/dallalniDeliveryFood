@@ -5,15 +5,7 @@
 
       <hr />
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
       <dl class="row-md jh-entity-details">
-        <dt><span>ID</span></dt>
-        <dd>
-          <span>{{ commande.id }}</span>
-        </dd>
         <dt><span>Adresse Commande</span></dt>
         <dd>
           <span>{{ commande.adresseCommande }}</span>
@@ -64,7 +56,7 @@
         <fa-icon icon="arrow-left"></fa-icon>
       </button>
 
-      <button type="button" [routerLink]="['/commande', commande.id, 'edit']" class="btn btn-primary times">
+      <button type="button" [routerLink]="['/commande', commande.id, 'edit']" class="btn btn-primary text-white">
         <fa-icon icon="pencil-alt"></fa-icon>
       </button>
     </div>
