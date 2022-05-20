@@ -117,4 +117,25 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.totalCommande += lineC.prix!;
     });
   }
+
+  deleteLineCmd(line: ICommandeDetails): void {
+    this.totalCommande = 0;
+    const index = this.linesCmd!.findIndex(lineC => lineC.plat!.id === line.plat!.id);
+    if (index !== -1) {
+      this.linesCmd!.splice(index, 1);
+    }
+
+    this.linesCmd!.forEach(lineC => {
+      this.totalCommande += lineC.prix!;
+    });
+  }
+
+  changeQties(): void {
+    this.totalCommande = 0;
+    this.linesCmd!.forEach(lineC => {
+      lineC.prix = lineC.plat!.remisePerc ? lineC.plat!.prix! - (lineC.plat!.prix! * lineC.plat!.remisePerc) / 100 : lineC.plat!.prix;
+      lineC.prix = lineC.prix! * lineC.qte!;
+      this.totalCommande += lineC.prix;
+    });
+  }
 }

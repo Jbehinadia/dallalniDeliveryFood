@@ -211,11 +211,14 @@
         <ul class="food-list">
           <li class="row food-list item" *ngFor="let line of linesCmd">
             <div class="col-md-2 food-image" [style.backgroundImage]="'url(' + line.plat!.imagePath + ')'"></div>
-            <div class="col-md-2 food-buy-amount">{{ line.qte }} x</div>
-            <div class="col-md-6 food-name">{{ line.plat!.nomPlat }}</div>
+            <div class="col-md-3 food-buy-amount">
+              <input type="number" [min]="1" class="form-control" [(ngModel)]="line.qte" (ngModelChange)="changeQties()" />
+            </div>
+            <div class="col-md-4 food-name">{{ line.plat!.nomPlat }}</div>
             <div class="col-md-2 food-price text-nowrap">
               <span>{{ line.prix }} DT</span>
             </div>
+            <div class="col-md-1 text-danger" (click)="deleteLineCmd(line)"><fa-icon icon="times"></fa-icon></div>
           </li>
         </ul>
         <div class="total-price">
