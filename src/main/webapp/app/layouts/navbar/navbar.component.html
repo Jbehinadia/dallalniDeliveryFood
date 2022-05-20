@@ -21,7 +21,7 @@
               ></path>
             </svg>
           </button>
-          <input type="search" class="form-control" name="search" placeholder="Search" />
+          <input type="search" class="form-control" name="search" placeholder="Recherche" />
         </div>
       </div>
     </a>
@@ -179,19 +179,19 @@
                 data-cy="passwordItem"
               >
                 <fa-icon icon="lock" [fixedWidth]="true"></fa-icon>
-                <span>Password</span>
+                <span>Mot de passe</span>
               </a>
             </li>
             <li *ngSwitchCase="true">
               <a class="dropdown-item" (click)="logout()" id="logout" data-cy="logout">
                 <fa-icon icon="sign-out-alt" [fixedWidth]="true"></fa-icon>
-                <span>Sign out</span>
+                <span>Déconnecter</span>
               </a>
             </li>
             <li *ngSwitchCase="false">
               <a class="dropdown-item" (click)="login()" id="login" data-cy="login">
                 <fa-icon icon="sign-in-alt" [fixedWidth]="true"></fa-icon>
-                <span>Sign in</span>
+                <span>Se connecter</span>
               </a>
             </li>
             <li *ngSwitchCase="false">
@@ -203,7 +203,7 @@
                 data-cy="register"
               >
                 <fa-icon icon="user-plus" [fixedWidth]="true"></fa-icon>
-                <span>Register</span>
+                <span>S'inscrire</span>
               </a>
             </li>
           </ul>
