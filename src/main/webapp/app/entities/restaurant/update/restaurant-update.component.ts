@@ -17,27 +17,22 @@ import { RestaurantService } from '../service/restaurant.service';
 })
 export class RestaurantUpdateComponent implements OnInit {
   isSaving = false;
-
-  editForm = this.fb.group({
-    id: [],
-    nomRestaurant: [],
-    adresseRestaurant: [],
-    numRestaurant: [],
-    dateOuverture: [],
-    dateFermiture: [],
-  });
+  heureO!: string;
+  heureF!: string;
+  restaurant: IRestaurant = {};
 
   constructor(protected restaurantService: RestaurantService, protected activatedRoute: ActivatedRoute, protected fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ restaurant }) => {
-      if (restaurant.id === undefined) {
-        const today = dayjs();
-        restaurant.dateOuverture = today;
-        restaurant.dateFermiture = today;
+      this.restaurant = restaurant;
+      if (!restaurant.id) {
+        this.heureO = dayjs(new Date()).format('HH:mm');
+        this.heureF = dayjs(new Date()).format('HH:mm');
+      } else {
+        this.heureO = dayjs(this.restaurant.dateOuverture).format('HH:mm');
+        this.heureF = dayjs(this.restaurant.dateFermiture).format('HH:mm');
       }
-
-      this.updateForm(restaurant);
     });
   }
 
@@ -47,13 +42,27 @@ export class RestaurantUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const restaurant = this.createFromForm();
-    restaurant.dateOuverture = dayjs(restaurant.dateFermiture);
-    restaurant.dateFermiture = dayjs(restaurant.dateFermiture);
-    if (restaurant.id !== undefined) {
-      this.subscribeToSaveResponse(this.restaurantService.update(restaurant));
+    if (this.heureO) {
+      const h = Number(this.heureO.toString().split(':')[0]);
+      const m = Number(this.heureO.toString().split(':')[1]);
+      const dateOuverture = new Date();
+      dateOuverture.setHours(h);
+      dateOuverture.setMinutes(m);
+      this.restaurant.dateOuverture = dayjs(dateOuverture);
+    }
+    if (this.heureF) {
+      const h = Number(this.heureF.toString().split(':')[0]);
+      const m = Number(this.heureF.toString().split(':')[1]);
+      const dateFermiture = new Date();
+      dateFermiture.setHours(h);
+      dateFermiture.setMinutes(m);
+      this.restaurant.dateFermiture = dayjs(dateFermiture);
+    }
+
+    if (this.restaurant.id !== undefined) {
+      this.subscribeToSaveResponse(this.restaurantService.update(this.restaurant));
     } else {
-      this.subscribeToSaveResponse(this.restaurantService.create(restaurant));
+      this.subscribeToSaveResponse(this.restaurantService.create(this.restaurant));
     }
   }
 
@@ -74,32 +83,5 @@ export class RestaurantUpdateComponent implements OnInit {
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
-  }
-
-  protected updateForm(restaurant: IRestaurant): void {
-    this.editForm.patchValue({
-      id: restaurant.id,
-      nomRestaurant: restaurant.nomRestaurant,
-      adresseRestaurant: restaurant.adresseRestaurant,
-      numRestaurant: restaurant.numRestaurant,
-      dateOuverture: restaurant.dateOuverture ? restaurant.dateOuverture.format(DATE_TIME_FORMAT) : null,
-      dateFermiture: restaurant.dateFermiture ? restaurant.dateFermiture.format(DATE_TIME_FORMAT) : null,
-    });
-  }
-
-  protected createFromForm(): IRestaurant {
-    return {
-      ...new Restaurant(),
-      id: this.editForm.get(['id'])!.value,
-      nomRestaurant: this.editForm.get(['nomRestaurant'])!.value,
-      adresseRestaurant: this.editForm.get(['adresseRestaurant'])!.value,
-      numRestaurant: this.editForm.get(['numRestaurant'])!.value,
-      dateOuverture: this.editForm.get(['dateOuverture'])!.value
-        ? dayjs(this.editForm.get(['dateOuverture'])!.value, DATE_TIME_FORMAT)
-        : undefined,
-      dateFermiture: this.editForm.get(['dateFermiture'])!.value
-        ? dayjs(this.editForm.get(['dateFermiture'])!.value, DATE_TIME_FORMAT)
-        : undefined,
-    };
   }
 }
