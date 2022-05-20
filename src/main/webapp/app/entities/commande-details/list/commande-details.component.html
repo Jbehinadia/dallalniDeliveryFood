@@ -3,36 +3,29 @@
     <span>Commande Details</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="loadPage()" [disabled]="isLoading">
+      <button class="btn btn-info me-2 text-white" (click)="loadPage()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span>Refresh List</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-commande-details"
+        class="btn btn-primary jh-create-entity create-commande-details text-white"
         [routerLink]="['/commande-details/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span> Create a new Commande Details </span>
       </button>
     </div>
   </h2>
 
-  <jhi-alert-error></jhi-alert-error>
-
-  <jhi-alert></jhi-alert>
-
   <div class="alert alert-warning" id="no-result" *ngIf="commandeDetails?.length === 0">
-    <span>No commandeDetails found</span>
+    <span>Aucun commandeDétails trouvés</span>
   </div>
 
   <div class="table-responsive" id="entities" *ngIf="commandeDetails && commandeDetails.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span>ID</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="prix"><span>Prix</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="etat"><span>Etat</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="commande.id"><span>Commande</span> <fa-icon icon="sort"></fa-icon></th>
@@ -42,9 +35,6 @@
       </thead>
       <tbody>
         <tr *ngFor="let commandeDetails of commandeDetails; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/commande-details', commandeDetails.id, 'view']">{{ commandeDetails.id }}</a>
-          </td>
           <td>{{ commandeDetails.prix }}</td>
           <td>{{ commandeDetails.etat }}</td>
           <td>
@@ -62,26 +52,23 @@
               <button
                 type="submit"
                 [routerLink]="['/commande-details', commandeDetails.id, 'view']"
-                class="btn btn-info btn-sm"
+                class="btn btn-info btn-sm text-white"
                 data-cy="entityDetailsButton"
               >
                 <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline">View</span>
               </button>
 
               <button
                 type="submit"
                 [routerLink]="['/commande-details', commandeDetails.id, 'edit']"
-                class="btn btn-primary btn-sm"
+                class="btn btn-primary btn-sm text-white"
                 data-cy="entityEditButton"
               >
                 <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline">Edit</span>
               </button>
 
-              <button type="submit" (click)="delete(commandeDetails)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+              <button type="submit" (click)="delete(commandeDetails)" class="btn btn-danger btn-sm text-white" data-cy="entityDeleteButton">
                 <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline">Delete</span>
               </button>
             </div>
           </td>
