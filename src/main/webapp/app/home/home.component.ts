@@ -43,15 +43,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.totalCommande = 0;
+    this.getTypePlats();
+    this.getAllPlats();
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => {
         this.account = account;
       });
-    this.totalCommande = 0;
-    this.getTypePlats();
-    this.getAllPlats();
   }
 
   getAllPlats(): void {
