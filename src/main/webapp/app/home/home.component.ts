@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   account: Account | null = null;
   totalCommande = 0;
   typePlats?: ITypePlat[] = [];
+  originPlats?: IPlat[] = [];
   Plats?: IPlat[] = [];
 
   private readonly destroy$ = new Subject<void>();
@@ -49,8 +50,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getAllPlats(): void {
+    this.originPlats = [];
+    this.Plats = [];
     this.platService.query().subscribe((resPlats: HttpResponse<IPlat[]>) => {
-      this.Plats = resPlats.body!;
+      this.originPlats = resPlats.body!;
+      this.Plats = this.originPlats;
       this.Plats.forEach(plat => {
         if (plat.typePlat!.id) {
           this.menuService.find(plat.menu!.id!).subscribe((resMenu: HttpResponse<IMenu>) => {
@@ -80,5 +84,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  filterPlatByType(typeID: number): void {
+    this.Plats = this.originPlats;
+    if (typeID) {
+      this.Plats = this.Plats?.filter(plat => plat.typePlat?.id === typeID);
+    }
   }
 }

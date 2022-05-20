@@ -17,7 +17,7 @@
     </header>
     <section class="section" id="restaurants">
       <div class="section-titles">
-        <div class="section-title">Type Plat&nbsp;🍔</div>
+        <div class="section-title">catégories&nbsp;🍔</div>
         <button class="btn btn-Delivery btn-round date-select">
           <svg
             t="1586139290823"
@@ -56,7 +56,7 @@
         <div class="row">
           <div class="col-md-11">
             <ul class="category-list">
-              <li class="category-list item" id="all">
+              <li class="category-list item" id="all" (click)="filterPlatByType(0)">
                 <a href="#all">
                   <div class="category-icon">
                     <svg
@@ -79,7 +79,12 @@
                 </a>
               </li>
               <!-- afficher les types des plats -->
-              <li class="category-list item" *ngFor="let typePlat of typePlats; let i = index" id="type-{{ i }}">
+              <li
+                class="category-list item"
+                *ngFor="let typePlat of typePlats; let i = index"
+                id="type-{{ i }}"
+                (click)="filterPlatByType(typePlat.id!)"
+              >
                 <a href="#type-{{ i }}">
                   <div class="category-icon">
                     <div
