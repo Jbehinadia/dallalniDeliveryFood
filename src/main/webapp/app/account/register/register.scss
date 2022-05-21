@@ -66,7 +66,7 @@
   border-radius: 0;
   border-bottom: 1px solid #aaa;
   padding: 1em 0.5em 0.5em;
-  padding-left: 2em;
+  // padding-left: 2em;
   outline: none;
   margin: 1.5em auto;
   transition: all 0.5s ease;
@@ -88,7 +88,7 @@
   border: 1px solid #7a72ff;
   margin-top: 1.5em;
   margin-bottom: 1em;
-  margin-left: 4em;
+  // margin-left: 4em;
 }
 
 .btn:hover,
@@ -102,6 +102,7 @@
   height: 240px;
   background: url('../../../content/images/svg/delivery-header.svg') no-repeat center;
   background-size: contain;
+  margin-bottom: 25em;
 }
 .jh-card {
   padding: 0.5%;

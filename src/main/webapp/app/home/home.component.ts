@@ -16,6 +16,7 @@ import { RestaurantService } from 'app/entities/restaurant/service/restaurant.se
 import { Restaurant } from 'app/entities/restaurant/restaurant.model';
 import { ICommande } from 'app/entities/commande/commande.model';
 import { ICommandeDetails } from 'app/entities/commande-details/commande-details.model';
+import { CommandeService } from 'app/entities/commande/service/commande.service';
 
 @Component({
   selector: 'jhi-home',
@@ -30,10 +31,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   Plats?: IPlat[] = [];
   commande?: ICommande = {};
   linesCmd?: ICommandeDetails[] = [];
+  nbrCommandes = 0;
 
   private readonly destroy$ = new Subject<void>();
 
   constructor(
+    protected commandeService: CommandeService,
     protected restaurantService: RestaurantService,
     protected typePlatService: TypePlatService,
     protected platService: PlatService,
@@ -51,7 +54,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => {
         this.account = account;
+        this.getUserCommandes();
       });
+  }
+
+  getUserCommandes(): void {
+    this.commandeService.count({}).subscribe(resCmd => (this.nbrCommandes = resCmd.body!));
   }
 
   getAllPlats(): void {
