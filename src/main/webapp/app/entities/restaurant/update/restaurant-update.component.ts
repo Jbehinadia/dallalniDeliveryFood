@@ -4,11 +4,9 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-
 import dayjs from 'dayjs/esm';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 
-import { IRestaurant, Restaurant } from '../restaurant.model';
+import { IRestaurant } from '../restaurant.model';
 import { RestaurantService } from '../service/restaurant.service';
 
 @Component({
