@@ -3,7 +3,7 @@
   "changelogDate": "20220516214139",
   "dto": "mapstruct",
   "embedded": false,
-  "entityTableName": "responsable_restaurant",
+  "entityTableName": "ResponsableRestaurant",
   "fields": [
     {
       "fieldName": "nomResponsable",
@@ -27,14 +27,6 @@
   "name": "ResponsableRestaurant",
   "pagination": "pagination",
   "readOnly": false,
-  "relationships": [
-    {
-      "otherEntityName": "restaurant",
-      "otherEntityRelationshipName": "responsableRestaurant",
-      "ownerSide": true,
-      "relationshipName": "restaurant",
-      "relationshipType": "one-to-one"
-    }
-  ],
+  "relationships": [],
   "service": "serviceImpl"
 }

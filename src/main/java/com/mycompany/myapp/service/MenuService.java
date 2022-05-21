@@ -42,6 +42,14 @@ public interface MenuService {
     Flux<MenuDTO> findAll(Pageable pageable);
 
     /**
+     * Get all the menus with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Flux<MenuDTO> findAllWithEagerRelationships(Pageable pageable);
+
+    /**
      * Returns the number of menus available.
      * @return the number of entities in the database.
      *

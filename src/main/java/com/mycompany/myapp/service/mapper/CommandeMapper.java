@@ -13,14 +13,15 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface CommandeMapper extends EntityMapper<CommandeDTO, Commande> {
-    @Mapping(target = "livreur", source = "livreur", qualifiedByName = "livreurId")
+    @Mapping(target = "livreur", source = "livreur", qualifiedByName = "livreurNomLivreur")
     @Mapping(target = "client", source = "client", qualifiedByName = "clientId")
     CommandeDTO toDto(Commande s);
 
-    @Named("livreurId")
+    @Named("livreurNomLivreur")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    LivreurDTO toDtoLivreurId(Livreur livreur);
+    @Mapping(target = "nomLivreur", source = "nomLivreur")
+    LivreurDTO toDtoLivreurNomLivreur(Livreur livreur);
 
     @Named("clientId")
     @BeanMapping(ignoreByDefault = true)

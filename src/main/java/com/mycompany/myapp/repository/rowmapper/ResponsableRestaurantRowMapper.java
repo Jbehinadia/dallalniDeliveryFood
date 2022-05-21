@@ -29,7 +29,6 @@ public class ResponsableRestaurantRowMapper implements BiFunction<Row, String, R
         entity.setPrenomResponsable(converter.fromRow(row, prefix + "_prenom_responsable", String.class));
         entity.setAdresseResponsable(converter.fromRow(row, prefix + "_adresse_responsable", String.class));
         entity.setNumResponsable(converter.fromRow(row, prefix + "_num_responsable", String.class));
-        entity.setRestaurantId(converter.fromRow(row, prefix + "_restaurant_id", Long.class));
         return entity;
     }
 }

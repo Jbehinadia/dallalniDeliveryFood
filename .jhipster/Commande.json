@@ -45,12 +45,7 @@
   "readOnly": false,
   "relationships": [
     {
-      "otherEntityName": "commandeDetails",
-      "otherEntityRelationshipName": "commande",
-      "relationshipName": "commandeDetails",
-      "relationshipType": "one-to-many"
-    },
-    {
+      "otherEntityField": "nomLivreur",
       "otherEntityName": "livreur",
       "otherEntityRelationshipName": "commande",
       "relationshipName": "livreur",

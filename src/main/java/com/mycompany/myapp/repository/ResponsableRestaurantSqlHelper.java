@@ -16,7 +16,6 @@ public class ResponsableRestaurantSqlHelper {
         columns.add(Column.aliased("adresse_responsable", table, columnPrefix + "_adresse_responsable"));
         columns.add(Column.aliased("num_responsable", table, columnPrefix + "_num_responsable"));
 
-        columns.add(Column.aliased("restaurant_id", table, columnPrefix + "_restaurant_id"));
         return columns;
     }
 }

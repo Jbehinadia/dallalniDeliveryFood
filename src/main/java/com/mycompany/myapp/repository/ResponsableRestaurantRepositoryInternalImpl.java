@@ -4,7 +4,6 @@ import static org.springframework.data.relational.core.query.Criteria.where;
 
 import com.mycompany.myapp.domain.ResponsableRestaurant;
 import com.mycompany.myapp.repository.rowmapper.ResponsableRestaurantRowMapper;
-import com.mycompany.myapp.repository.rowmapper.RestaurantRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import org.springframework.data.relational.core.sql.Condition;
 import org.springframework.data.relational.core.sql.Conditions;
 import org.springframework.data.relational.core.sql.Expression;
 import org.springframework.data.relational.core.sql.Select;
-import org.springframework.data.relational.core.sql.SelectBuilder.SelectFromAndJoinCondition;
+import org.springframework.data.relational.core.sql.SelectBuilder.SelectFromAndJoin;
 import org.springframework.data.relational.core.sql.Table;
 import org.springframework.data.relational.repository.support.MappingRelationalEntityInformation;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -45,16 +44,13 @@ class ResponsableRestaurantRepositoryInternalImpl
     private final R2dbcEntityTemplate r2dbcEntityTemplate;
     private final EntityManager entityManager;
 
-    private final RestaurantRowMapper restaurantMapper;
     private final ResponsableRestaurantRowMapper responsablerestaurantMapper;
 
-    private static final Table entityTable = Table.aliased("responsable_restaurant", EntityManager.ENTITY_ALIAS);
-    private static final Table restaurantTable = Table.aliased("restaurant", "restaurant");
+    private static final Table entityTable = Table.aliased("ResponsableRestaurant", EntityManager.ENTITY_ALIAS);
 
     public ResponsableRestaurantRepositoryInternalImpl(
         R2dbcEntityTemplate template,
         EntityManager entityManager,
-        RestaurantRowMapper restaurantMapper,
         ResponsableRestaurantRowMapper responsablerestaurantMapper,
         R2dbcEntityOperations entityOperations,
         R2dbcConverter converter
@@ -67,7 +63,6 @@ class ResponsableRestaurantRepositoryInternalImpl
         this.db = template.getDatabaseClient();
         this.r2dbcEntityTemplate = template;
         this.entityManager = entityManager;
-        this.restaurantMapper = restaurantMapper;
         this.responsablerestaurantMapper = responsablerestaurantMapper;
     }
 
@@ -78,14 +73,7 @@ class ResponsableRestaurantRepositoryInternalImpl
 
     RowsFetchSpec<ResponsableRestaurant> createQuery(Pageable pageable, Condition whereClause) {
         List<Expression> columns = ResponsableRestaurantSqlHelper.getColumns(entityTable, EntityManager.ENTITY_ALIAS);
-        columns.addAll(RestaurantSqlHelper.getColumns(restaurantTable, "restaurant"));
-        SelectFromAndJoinCondition selectFrom = Select
-            .builder()
-            .select(columns)
-            .from(entityTable)
-            .leftOuterJoin(restaurantTable)
-            .on(Column.create("restaurant_id", entityTable))
-            .equals(Column.create("id", restaurantTable));
+        SelectFromAndJoin selectFrom = Select.builder().select(columns).from(entityTable);
         // we do not support Criteria here for now as of https://github.com/jhipster/generator-jhipster/issues/18269
         String select = entityManager.createSelect(selectFrom, ResponsableRestaurant.class, pageable, whereClause);
         return db.sql(select).map(this::process);
@@ -104,7 +92,6 @@ class ResponsableRestaurantRepositoryInternalImpl
 
     private ResponsableRestaurant process(Row row, RowMetadata metadata) {
         ResponsableRestaurant entity = responsablerestaurantMapper.apply(row, "e");
-        entity.setRestaurant(restaurantMapper.apply(row, "restaurant"));
         return entity;
     }
 

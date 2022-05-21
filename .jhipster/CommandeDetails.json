@@ -12,6 +12,10 @@
     {
       "fieldName": "etat",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "qte",
+      "fieldType": "Double"
     }
   ],
   "fluentMethods": true,
@@ -27,6 +31,7 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "nomPlat",
       "otherEntityName": "plat",
       "otherEntityRelationshipName": "commandeDetails",
       "relationshipName": "plat",

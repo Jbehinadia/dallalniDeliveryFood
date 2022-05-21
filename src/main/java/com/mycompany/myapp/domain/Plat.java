@@ -2,8 +2,6 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -37,15 +35,10 @@ public class Plat implements Serializable {
     private Double remiceVal;
 
     @Transient
-    @JsonIgnoreProperties(value = { "commande", "plat" }, allowSetters = true)
-    private Set<CommandeDetails> commandeDetails = new HashSet<>();
-
-    @Transient
-    @JsonIgnoreProperties(value = { "plats", "restaurant" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "restaurant" }, allowSetters = true)
     private Menu menu;
 
     @Transient
-    @JsonIgnoreProperties(value = { "plats" }, allowSetters = true)
     private TypePlat typePlat;
 
     @Column("menu_id")
@@ -132,37 +125,6 @@ public class Plat implements Serializable {
 
     public void setRemiceVal(Double remiceVal) {
         this.remiceVal = remiceVal;
-    }
-
-    public Set<CommandeDetails> getCommandeDetails() {
-        return this.commandeDetails;
-    }
-
-    public void setCommandeDetails(Set<CommandeDetails> commandeDetails) {
-        if (this.commandeDetails != null) {
-            this.commandeDetails.forEach(i -> i.setPlat(null));
-        }
-        if (commandeDetails != null) {
-            commandeDetails.forEach(i -> i.setPlat(this));
-        }
-        this.commandeDetails = commandeDetails;
-    }
-
-    public Plat commandeDetails(Set<CommandeDetails> commandeDetails) {
-        this.setCommandeDetails(commandeDetails);
-        return this;
-    }
-
-    public Plat addCommandeDetails(CommandeDetails commandeDetails) {
-        this.commandeDetails.add(commandeDetails);
-        commandeDetails.setPlat(this);
-        return this;
-    }
-
-    public Plat removeCommandeDetails(CommandeDetails commandeDetails) {
-        this.commandeDetails.remove(commandeDetails);
-        commandeDetails.setPlat(null);
-        return this;
     }
 
     public Menu getMenu() {

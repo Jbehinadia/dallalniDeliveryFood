@@ -42,6 +42,14 @@ public interface RestaurantService {
     Flux<RestaurantDTO> findAll(Pageable pageable);
 
     /**
+     * Get all the restaurants with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Flux<RestaurantDTO> findAllWithEagerRelationships(Pageable pageable);
+
+    /**
      * Returns the number of restaurants available.
      * @return the number of entities in the database.
      *

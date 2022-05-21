@@ -13,6 +13,7 @@ public class CommandeDetailsSqlHelper {
         columns.add(Column.aliased("id", table, columnPrefix + "_id"));
         columns.add(Column.aliased("prix", table, columnPrefix + "_prix"));
         columns.add(Column.aliased("etat", table, columnPrefix + "_etat"));
+        columns.add(Column.aliased("qte", table, columnPrefix + "_qte"));
 
         columns.add(Column.aliased("commande_id", table, columnPrefix + "_commande_id"));
         columns.add(Column.aliased("plat_id", table, columnPrefix + "_plat_id"));

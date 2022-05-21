@@ -42,6 +42,14 @@ public interface PlatService {
     Flux<PlatDTO> findAll(Pageable pageable);
 
     /**
+     * Get all the plats with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Flux<PlatDTO> findAllWithEagerRelationships(Pageable pageable);
+
+    /**
      * Returns the number of plats available.
      * @return the number of entities in the database.
      *

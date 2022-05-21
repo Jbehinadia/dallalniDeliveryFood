@@ -25,12 +25,15 @@ public class CommandeDetails implements Serializable {
     @Column("etat")
     private String etat;
 
+    @Column("qte")
+    private Double qte;
+
     @Transient
-    @JsonIgnoreProperties(value = { "commandeDetails", "livreur", "client" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "livreur", "client" }, allowSetters = true)
     private Commande commande;
 
     @Transient
-    @JsonIgnoreProperties(value = { "commandeDetails", "menu", "typePlat" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "menu", "typePlat" }, allowSetters = true)
     private Plat plat;
 
     @Column("commande_id")
@@ -78,6 +81,19 @@ public class CommandeDetails implements Serializable {
 
     public void setEtat(String etat) {
         this.etat = etat;
+    }
+
+    public Double getQte() {
+        return this.qte;
+    }
+
+    public CommandeDetails qte(Double qte) {
+        this.setQte(qte);
+        return this;
+    }
+
+    public void setQte(Double qte) {
+        this.qte = qte;
     }
 
     public Commande getCommande() {
@@ -150,6 +166,7 @@ public class CommandeDetails implements Serializable {
             "id=" + getId() +
             ", prix=" + getPrix() +
             ", etat='" + getEtat() + "'" +
+            ", qte=" + getQte() +
             "}";
     }
 }

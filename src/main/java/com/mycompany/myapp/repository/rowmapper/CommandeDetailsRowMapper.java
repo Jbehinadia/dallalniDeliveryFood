@@ -27,6 +27,7 @@ public class CommandeDetailsRowMapper implements BiFunction<Row, String, Command
         entity.setId(converter.fromRow(row, prefix + "_id", Long.class));
         entity.setPrix(converter.fromRow(row, prefix + "_prix", Double.class));
         entity.setEtat(converter.fromRow(row, prefix + "_etat", String.class));
+        entity.setQte(converter.fromRow(row, prefix + "_qte", Double.class));
         entity.setCommandeId(converter.fromRow(row, prefix + "_commande_id", Long.class));
         entity.setPlatId(converter.fromRow(row, prefix + "_plat_id", Long.class));
         return entity;

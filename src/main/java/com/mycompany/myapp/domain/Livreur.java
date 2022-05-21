@@ -1,9 +1,6 @@
 package com.mycompany.myapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -32,10 +29,6 @@ public class Livreur implements Serializable {
 
     @Column("num_livreur")
     private String numLivreur;
-
-    @Transient
-    @JsonIgnoreProperties(value = { "commandeDetails", "livreur", "client" }, allowSetters = true)
-    private Set<Commande> commandes = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -102,37 +95,6 @@ public class Livreur implements Serializable {
 
     public void setNumLivreur(String numLivreur) {
         this.numLivreur = numLivreur;
-    }
-
-    public Set<Commande> getCommandes() {
-        return this.commandes;
-    }
-
-    public void setCommandes(Set<Commande> commandes) {
-        if (this.commandes != null) {
-            this.commandes.forEach(i -> i.setLivreur(null));
-        }
-        if (commandes != null) {
-            commandes.forEach(i -> i.setLivreur(this));
-        }
-        this.commandes = commandes;
-    }
-
-    public Livreur commandes(Set<Commande> commandes) {
-        this.setCommandes(commandes);
-        return this;
-    }
-
-    public Livreur addCommande(Commande commande) {
-        this.commandes.add(commande);
-        commande.setLivreur(this);
-        return this;
-    }
-
-    public Livreur removeCommande(Commande commande) {
-        this.commandes.remove(commande);
-        commande.setLivreur(null);
-        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

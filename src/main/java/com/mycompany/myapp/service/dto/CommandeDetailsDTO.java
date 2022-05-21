@@ -14,6 +14,8 @@ public class CommandeDetailsDTO implements Serializable {
 
     private String etat;
 
+    private Double qte;
+
     private CommandeDTO commande;
 
     private PlatDTO plat;
@@ -40,6 +42,14 @@ public class CommandeDetailsDTO implements Serializable {
 
     public void setEtat(String etat) {
         this.etat = etat;
+    }
+
+    public Double getQte() {
+        return qte;
+    }
+
+    public void setQte(Double qte) {
+        this.qte = qte;
     }
 
     public CommandeDTO getCommande() {
@@ -86,6 +96,7 @@ public class CommandeDetailsDTO implements Serializable {
             "id=" + getId() +
             ", prix=" + getPrix() +
             ", etat='" + getEtat() + "'" +
+            ", qte=" + getQte() +
             ", commande=" + getCommande() +
             ", plat=" + getPlat() +
             "}";

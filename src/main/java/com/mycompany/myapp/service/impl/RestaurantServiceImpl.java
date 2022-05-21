@@ -65,6 +65,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantRepository.findAllBy(pageable).map(restaurantMapper::toDto);
     }
 
+    public Flux<RestaurantDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return restaurantRepository.findAllWithEagerRelationships(pageable).map(restaurantMapper::toDto);
+    }
+
     public Mono<Long> countAll() {
         return restaurantRepository.count();
     }
@@ -73,7 +77,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Transactional(readOnly = true)
     public Mono<RestaurantDTO> findOne(Long id) {
         log.debug("Request to get Restaurant : {}", id);
-        return restaurantRepository.findById(id).map(restaurantMapper::toDto);
+        return restaurantRepository.findOneWithEagerRelationships(id).map(restaurantMapper::toDto);
     }
 
     @Override

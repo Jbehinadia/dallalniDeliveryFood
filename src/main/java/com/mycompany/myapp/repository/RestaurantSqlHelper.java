@@ -17,6 +17,7 @@ public class RestaurantSqlHelper {
         columns.add(Column.aliased("date_ouverture", table, columnPrefix + "_date_ouverture"));
         columns.add(Column.aliased("date_fermiture", table, columnPrefix + "_date_fermiture"));
 
+        columns.add(Column.aliased("responsable_restaurant_id", table, columnPrefix + "_responsable_restaurant_id"));
         return columns;
     }
 }

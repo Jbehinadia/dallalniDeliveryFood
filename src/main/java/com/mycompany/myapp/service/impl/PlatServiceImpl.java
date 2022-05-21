@@ -65,6 +65,10 @@ public class PlatServiceImpl implements PlatService {
         return platRepository.findAllBy(pageable).map(platMapper::toDto);
     }
 
+    public Flux<PlatDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return platRepository.findAllWithEagerRelationships(pageable).map(platMapper::toDto);
+    }
+
     public Mono<Long> countAll() {
         return platRepository.count();
     }
@@ -73,7 +77,7 @@ public class PlatServiceImpl implements PlatService {
     @Transactional(readOnly = true)
     public Mono<PlatDTO> findOne(Long id) {
         log.debug("Request to get Plat : {}", id);
-        return platRepository.findById(id).map(platMapper::toDto);
+        return platRepository.findOneWithEagerRelationships(id).map(platMapper::toDto);
     }
 
     @Override

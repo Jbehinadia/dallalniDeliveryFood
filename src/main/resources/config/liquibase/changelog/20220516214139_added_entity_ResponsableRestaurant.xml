@@ -10,7 +10,7 @@
         Added the entity ResponsableRestaurant.
     -->
     <changeSet id="20220516214139-1" author="jhipster">
-        <createTable tableName="responsable_restaurant">
+        <createTable tableName="ResponsableRestaurant">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -25,9 +25,6 @@
             </column>
             <column name="num_responsable" type="varchar(255)">
                 <constraints nullable="true" />
-            </column>
-            <column name="restaurant_id" type="bigint">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_responsable_restaurant__restaurant_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
@@ -45,9 +42,9 @@
     -->
     <changeSet id="20220516214139-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/responsable_restaurant.csv"
+                  file="config/liquibase/fake-data/ResponsableRestaurant.csv"
                   separator=";"
-                  tableName="responsable_restaurant"
+                  tableName="ResponsableRestaurant"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="nom_responsable" type="string"/>

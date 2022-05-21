@@ -18,6 +18,21 @@ public interface RestaurantRepository extends ReactiveCrudRepository<Restaurant,
     Flux<Restaurant> findAllBy(Pageable pageable);
 
     @Override
+    Mono<Restaurant> findOneWithEagerRelationships(Long id);
+
+    @Override
+    Flux<Restaurant> findAllWithEagerRelationships();
+
+    @Override
+    Flux<Restaurant> findAllWithEagerRelationships(Pageable page);
+
+    @Query("SELECT * FROM restaurant entity WHERE entity.responsable_restaurant_id = :id")
+    Flux<Restaurant> findByResponsableRestaurant(Long id);
+
+    @Query("SELECT * FROM restaurant entity WHERE entity.responsable_restaurant_id IS NULL")
+    Flux<Restaurant> findAllWhereResponsableRestaurantIsNull();
+
+    @Override
     <S extends Restaurant> Mono<S> save(S entity);
 
     @Override
@@ -41,4 +56,11 @@ interface RestaurantRepositoryInternal {
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Restaurant> findAllBy(Pageable pageable, Criteria criteria);
 
+    Mono<Restaurant> findOneWithEagerRelationships(Long id);
+
+    Flux<Restaurant> findAllWithEagerRelationships();
+
+    Flux<Restaurant> findAllWithEagerRelationships(Pageable page);
+
+    Mono<Void> deleteById(Long id);
 }

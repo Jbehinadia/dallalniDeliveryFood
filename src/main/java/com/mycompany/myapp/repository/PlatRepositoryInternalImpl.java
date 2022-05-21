@@ -109,6 +109,21 @@ class PlatRepositoryInternalImpl extends SimpleR2dbcRepository<Plat, Long> imple
         return createQuery(null, whereClause).one();
     }
 
+    @Override
+    public Mono<Plat> findOneWithEagerRelationships(Long id) {
+        return findById(id);
+    }
+
+    @Override
+    public Flux<Plat> findAllWithEagerRelationships() {
+        return findAll();
+    }
+
+    @Override
+    public Flux<Plat> findAllWithEagerRelationships(Pageable page) {
+        return findAllBy(page);
+    }
+
     private Plat process(Row row, RowMetadata metadata) {
         Plat entity = platMapper.apply(row, "e");
         entity.setMenu(menuMapper.apply(row, "menu"));

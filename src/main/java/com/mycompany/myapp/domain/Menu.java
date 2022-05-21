@@ -2,8 +2,6 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -25,11 +23,7 @@ public class Menu implements Serializable {
     private String nomMenu;
 
     @Transient
-    @JsonIgnoreProperties(value = { "commandeDetails", "menu", "typePlat" }, allowSetters = true)
-    private Set<Plat> plats = new HashSet<>();
-
-    @Transient
-    @JsonIgnoreProperties(value = { "commandes" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "responsableRestaurant" }, allowSetters = true)
     private Restaurant restaurant;
 
     @Column("restaurant_id")
@@ -61,37 +55,6 @@ public class Menu implements Serializable {
 
     public void setNomMenu(String nomMenu) {
         this.nomMenu = nomMenu;
-    }
-
-    public Set<Plat> getPlats() {
-        return this.plats;
-    }
-
-    public void setPlats(Set<Plat> plats) {
-        if (this.plats != null) {
-            this.plats.forEach(i -> i.setMenu(null));
-        }
-        if (plats != null) {
-            plats.forEach(i -> i.setMenu(this));
-        }
-        this.plats = plats;
-    }
-
-    public Menu plats(Set<Plat> plats) {
-        this.setPlats(plats);
-        return this;
-    }
-
-    public Menu addPlat(Plat plat) {
-        this.plats.add(plat);
-        plat.setMenu(this);
-        return this;
-    }
-
-    public Menu removePlat(Plat plat) {
-        this.plats.remove(plat);
-        plat.setMenu(null);
-        return this;
     }
 
     public Restaurant getRestaurant() {

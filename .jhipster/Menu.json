@@ -17,14 +17,9 @@
   "readOnly": false,
   "relationships": [
     {
-      "otherEntityName": "plat",
-      "otherEntityRelationshipName": "menu",
-      "relationshipName": "plat",
-      "relationshipType": "one-to-many"
-    },
-    {
+      "otherEntityField": "nomRestaurant",
       "otherEntityName": "restaurant",
-      "otherEntityRelationshipName": "commande",
+      "otherEntityRelationshipName": "menu",
       "relationshipName": "restaurant",
       "relationshipType": "many-to-one"
     }

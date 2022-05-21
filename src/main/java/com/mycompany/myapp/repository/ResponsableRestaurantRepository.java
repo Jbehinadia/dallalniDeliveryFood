@@ -18,12 +18,6 @@ public interface ResponsableRestaurantRepository
     extends ReactiveCrudRepository<ResponsableRestaurant, Long>, ResponsableRestaurantRepositoryInternal {
     Flux<ResponsableRestaurant> findAllBy(Pageable pageable);
 
-    @Query("SELECT * FROM responsable_restaurant entity WHERE entity.restaurant_id = :id")
-    Flux<ResponsableRestaurant> findByRestaurant(Long id);
-
-    @Query("SELECT * FROM responsable_restaurant entity WHERE entity.restaurant_id IS NULL")
-    Flux<ResponsableRestaurant> findAllWhereRestaurantIsNull();
-
     @Override
     <S extends ResponsableRestaurant> Mono<S> save(S entity);
 

@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.mapping.Table;
 /**
  * A ResponsableRestaurant.
  */
-@Table("responsable_restaurant")
+@Table("ResponsableRestaurant")
 public class ResponsableRestaurant implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,12 +29,6 @@ public class ResponsableRestaurant implements Serializable {
 
     @Column("num_responsable")
     private String numResponsable;
-
-    @Transient
-    private Restaurant restaurant;
-
-    @Column("restaurant_id")
-    private Long restaurantId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -101,28 +95,6 @@ public class ResponsableRestaurant implements Serializable {
 
     public void setNumResponsable(String numResponsable) {
         this.numResponsable = numResponsable;
-    }
-
-    public Restaurant getRestaurant() {
-        return this.restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-        this.restaurantId = restaurant != null ? restaurant.getId() : null;
-    }
-
-    public ResponsableRestaurant restaurant(Restaurant restaurant) {
-        this.setRestaurant(restaurant);
-        return this;
-    }
-
-    public Long getRestaurantId() {
-        return this.restaurantId;
-    }
-
-    public void setRestaurantId(Long restaurant) {
-        this.restaurantId = restaurant;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

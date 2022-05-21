@@ -5,9 +5,9 @@ export interface ICommandeDetails {
   id?: number;
   prix?: number | null;
   etat?: string | null;
+  qte?: number | null;
   commande?: ICommande | null;
   plat?: IPlat | null;
-  qte?: number;
 }
 
 export class CommandeDetails implements ICommandeDetails {
@@ -15,6 +15,7 @@ export class CommandeDetails implements ICommandeDetails {
     public id?: number,
     public prix?: number | null,
     public etat?: string | null,
+    public qte?: number | null,
     public commande?: ICommande | null,
     public plat?: IPlat | null
   ) {}

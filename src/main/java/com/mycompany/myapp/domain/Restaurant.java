@@ -1,10 +1,7 @@
 package com.mycompany.myapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -38,8 +35,10 @@ public class Restaurant implements Serializable {
     private Instant dateFermiture;
 
     @Transient
-    @JsonIgnoreProperties(value = { "plats", "restaurant" }, allowSetters = true)
-    private Set<Menu> commandes = new HashSet<>();
+    private ResponsableRestaurant responsableRestaurant;
+
+    @Column("responsable_restaurant_id")
+    private Long responsableRestaurantId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -121,35 +120,26 @@ public class Restaurant implements Serializable {
         this.dateFermiture = dateFermiture;
     }
 
-    public Set<Menu> getCommandes() {
-        return this.commandes;
+    public ResponsableRestaurant getResponsableRestaurant() {
+        return this.responsableRestaurant;
     }
 
-    public void setCommandes(Set<Menu> menus) {
-        if (this.commandes != null) {
-            this.commandes.forEach(i -> i.setRestaurant(null));
-        }
-        if (menus != null) {
-            menus.forEach(i -> i.setRestaurant(this));
-        }
-        this.commandes = menus;
+    public void setResponsableRestaurant(ResponsableRestaurant ResponsableRestaurant) {
+        this.responsableRestaurant = ResponsableRestaurant;
+        this.responsableRestaurantId = ResponsableRestaurant != null ? ResponsableRestaurant.getId() : null;
     }
 
-    public Restaurant commandes(Set<Menu> menus) {
-        this.setCommandes(menus);
+    public Restaurant responsableRestaurant(ResponsableRestaurant ResponsableRestaurant) {
+        this.setResponsableRestaurant(ResponsableRestaurant);
         return this;
     }
 
-    public Restaurant addCommande(Menu menu) {
-        this.commandes.add(menu);
-        menu.setRestaurant(this);
-        return this;
+    public Long getResponsableRestaurantId() {
+        return this.responsableRestaurantId;
     }
 
-    public Restaurant removeCommande(Menu menu) {
-        this.commandes.remove(menu);
-        menu.setRestaurant(null);
-        return this;
+    public void setResponsableRestaurantId(Long ResponsableRestaurant) {
+        this.responsableRestaurantId = ResponsableRestaurant;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

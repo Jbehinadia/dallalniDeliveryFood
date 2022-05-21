@@ -31,6 +31,7 @@ public class RestaurantRowMapper implements BiFunction<Row, String, Restaurant> 
         entity.setNumRestaurant(converter.fromRow(row, prefix + "_num_restaurant", String.class));
         entity.setDateOuverture(converter.fromRow(row, prefix + "_date_ouverture", Instant.class));
         entity.setDateFermiture(converter.fromRow(row, prefix + "_date_fermiture", Instant.class));
+        entity.setResponsableRestaurantId(converter.fromRow(row, prefix + "_responsable_restaurant_id", Long.class));
         return entity;
     }
 }

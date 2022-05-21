@@ -100,6 +100,21 @@ class MenuRepositoryInternalImpl extends SimpleR2dbcRepository<Menu, Long> imple
         return createQuery(null, whereClause).one();
     }
 
+    @Override
+    public Mono<Menu> findOneWithEagerRelationships(Long id) {
+        return findById(id);
+    }
+
+    @Override
+    public Flux<Menu> findAllWithEagerRelationships() {
+        return findAll();
+    }
+
+    @Override
+    public Flux<Menu> findAllWithEagerRelationships(Pageable page) {
+        return findAllBy(page);
+    }
+
     private Menu process(Row row, RowMetadata metadata) {
         Menu entity = menuMapper.apply(row, "e");
         entity.setRestaurant(restaurantMapper.apply(row, "restaurant"));

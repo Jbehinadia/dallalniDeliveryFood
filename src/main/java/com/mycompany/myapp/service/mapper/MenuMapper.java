@@ -11,11 +11,12 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface MenuMapper extends EntityMapper<MenuDTO, Menu> {
-    @Mapping(target = "restaurant", source = "restaurant", qualifiedByName = "restaurantId")
+    @Mapping(target = "restaurant", source = "restaurant", qualifiedByName = "restaurantNomRestaurant")
     MenuDTO toDto(Menu s);
 
-    @Named("restaurantId")
+    @Named("restaurantNomRestaurant")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    RestaurantDTO toDtoRestaurantId(Restaurant restaurant);
+    @Mapping(target = "nomRestaurant", source = "nomRestaurant")
+    RestaurantDTO toDtoRestaurantNomRestaurant(Restaurant restaurant);
 }

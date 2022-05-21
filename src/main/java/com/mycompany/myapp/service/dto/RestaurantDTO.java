@@ -21,6 +21,8 @@ public class RestaurantDTO implements Serializable {
 
     private Instant dateFermiture;
 
+    private ResponsableRestaurantDTO ResponsableRestaurant;
+
     public Long getId() {
         return id;
     }
@@ -69,6 +71,14 @@ public class RestaurantDTO implements Serializable {
         this.dateFermiture = dateFermiture;
     }
 
+    public ResponsableRestaurantDTO getResponsableRestaurant() {
+        return ResponsableRestaurant;
+    }
+
+    public void setResponsableRestaurant(ResponsableRestaurantDTO ResponsableRestaurant) {
+        this.ResponsableRestaurant = ResponsableRestaurant;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -100,6 +110,7 @@ public class RestaurantDTO implements Serializable {
             ", numRestaurant='" + getNumRestaurant() + "'" +
             ", dateOuverture='" + getDateOuverture() + "'" +
             ", dateFermiture='" + getDateFermiture() + "'" +
+            ", ResponsableRestaurant=" + getResponsableRestaurant() +
             "}";
     }
 }

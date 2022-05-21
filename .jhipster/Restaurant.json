@@ -33,10 +33,11 @@
   "readOnly": false,
   "relationships": [
     {
-      "otherEntityName": "menu",
+      "otherEntityField": "nomResponsable",
+      "otherEntityName": "ResponsableRestaurant",
       "otherEntityRelationshipName": "restaurant",
-      "relationshipName": "commande",
-      "relationshipType": "one-to-many"
+      "relationshipName": "ResponsableRestaurant",
+      "relationshipType": "many-to-one"
     }
   ],
   "service": "serviceImpl"

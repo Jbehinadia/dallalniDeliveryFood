@@ -17,6 +17,15 @@ import reactor.core.publisher.Mono;
 public interface PlatRepository extends ReactiveCrudRepository<Plat, Long>, PlatRepositoryInternal {
     Flux<Plat> findAllBy(Pageable pageable);
 
+    @Override
+    Mono<Plat> findOneWithEagerRelationships(Long id);
+
+    @Override
+    Flux<Plat> findAllWithEagerRelationships();
+
+    @Override
+    Flux<Plat> findAllWithEagerRelationships(Pageable page);
+
     @Query("SELECT * FROM plat entity WHERE entity.menu_id = :id")
     Flux<Plat> findByMenu(Long id);
 
@@ -53,4 +62,11 @@ interface PlatRepositoryInternal {
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Plat> findAllBy(Pageable pageable, Criteria criteria);
 
+    Mono<Plat> findOneWithEagerRelationships(Long id);
+
+    Flux<Plat> findAllWithEagerRelationships();
+
+    Flux<Plat> findAllWithEagerRelationships(Pageable page);
+
+    Mono<Void> deleteById(Long id);
 }

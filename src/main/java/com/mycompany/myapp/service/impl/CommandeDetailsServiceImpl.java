@@ -65,6 +65,10 @@ public class CommandeDetailsServiceImpl implements CommandeDetailsService {
         return commandeDetailsRepository.findAllBy(pageable).map(commandeDetailsMapper::toDto);
     }
 
+    public Flux<CommandeDetailsDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return commandeDetailsRepository.findAllWithEagerRelationships(pageable).map(commandeDetailsMapper::toDto);
+    }
+
     public Mono<Long> countAll() {
         return commandeDetailsRepository.count();
     }
@@ -73,7 +77,7 @@ public class CommandeDetailsServiceImpl implements CommandeDetailsService {
     @Transactional(readOnly = true)
     public Mono<CommandeDetailsDTO> findOne(Long id) {
         log.debug("Request to get CommandeDetails : {}", id);
-        return commandeDetailsRepository.findById(id).map(commandeDetailsMapper::toDto);
+        return commandeDetailsRepository.findOneWithEagerRelationships(id).map(commandeDetailsMapper::toDto);
     }
 
     @Override

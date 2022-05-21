@@ -27,13 +27,6 @@
   "name": "Client",
   "pagination": "pagination",
   "readOnly": false,
-  "relationships": [
-    {
-      "otherEntityName": "commande",
-      "otherEntityRelationshipName": "client",
-      "relationshipName": "commande",
-      "relationshipType": "one-to-many"
-    }
-  ],
+  "relationships": [],
   "service": "serviceImpl"
 }

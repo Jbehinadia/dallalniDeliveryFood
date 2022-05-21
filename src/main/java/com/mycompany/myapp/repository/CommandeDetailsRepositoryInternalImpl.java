@@ -111,6 +111,21 @@ class CommandeDetailsRepositoryInternalImpl
         return createQuery(null, whereClause).one();
     }
 
+    @Override
+    public Mono<CommandeDetails> findOneWithEagerRelationships(Long id) {
+        return findById(id);
+    }
+
+    @Override
+    public Flux<CommandeDetails> findAllWithEagerRelationships() {
+        return findAll();
+    }
+
+    @Override
+    public Flux<CommandeDetails> findAllWithEagerRelationships(Pageable page) {
+        return findAllBy(page);
+    }
+
     private CommandeDetails process(Row row, RowMetadata metadata) {
         CommandeDetails entity = commandedetailsMapper.apply(row, "e");
         entity.setCommande(commandeMapper.apply(row, "commande"));

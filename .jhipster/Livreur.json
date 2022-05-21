@@ -27,13 +27,6 @@
   "name": "Livreur",
   "pagination": "pagination",
   "readOnly": false,
-  "relationships": [
-    {
-      "otherEntityName": "commande",
-      "otherEntityRelationshipName": "livreur",
-      "relationshipName": "commande",
-      "relationshipType": "one-to-many"
-    }
-  ],
+  "relationships": [],
   "service": "serviceImpl"
 }

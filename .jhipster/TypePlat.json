@@ -20,13 +20,6 @@
   "name": "TypePlat",
   "pagination": "pagination",
   "readOnly": false,
-  "relationships": [
-    {
-      "otherEntityName": "plat",
-      "otherEntityRelationshipName": "typePlat",
-      "relationshipName": "plat",
-      "relationshipType": "one-to-many"
-    }
-  ],
+  "relationships": [],
   "service": "serviceImpl"
 }

@@ -17,6 +17,15 @@ import reactor.core.publisher.Mono;
 public interface CommandeRepository extends ReactiveCrudRepository<Commande, Long>, CommandeRepositoryInternal {
     Flux<Commande> findAllBy(Pageable pageable);
 
+    @Override
+    Mono<Commande> findOneWithEagerRelationships(Long id);
+
+    @Override
+    Flux<Commande> findAllWithEagerRelationships();
+
+    @Override
+    Flux<Commande> findAllWithEagerRelationships(Pageable page);
+
     @Query("SELECT * FROM commande entity WHERE entity.livreur_id = :id")
     Flux<Commande> findByLivreur(Long id);
 
@@ -53,4 +62,11 @@ interface CommandeRepositoryInternal {
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Commande> findAllBy(Pageable pageable, Criteria criteria);
 
+    Mono<Commande> findOneWithEagerRelationships(Long id);
+
+    Flux<Commande> findAllWithEagerRelationships();
+
+    Flux<Commande> findAllWithEagerRelationships(Pageable page);
+
+    Mono<Void> deleteById(Long id);
 }

@@ -14,7 +14,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface CommandeDetailsMapper extends EntityMapper<CommandeDetailsDTO, CommandeDetails> {
     @Mapping(target = "commande", source = "commande", qualifiedByName = "commandeId")
-    @Mapping(target = "plat", source = "plat", qualifiedByName = "platId")
+    @Mapping(target = "plat", source = "plat", qualifiedByName = "platNomPlat")
     CommandeDetailsDTO toDto(CommandeDetails s);
 
     @Named("commandeId")
@@ -22,8 +22,9 @@ public interface CommandeDetailsMapper extends EntityMapper<CommandeDetailsDTO, 
     @Mapping(target = "id", source = "id")
     CommandeDTO toDtoCommandeId(Commande commande);
 
-    @Named("platId")
+    @Named("platNomPlat")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    PlatDTO toDtoPlatId(Plat plat);
+    @Mapping(target = "nomPlat", source = "nomPlat")
+    PlatDTO toDtoPlatNomPlat(Plat plat);
 }

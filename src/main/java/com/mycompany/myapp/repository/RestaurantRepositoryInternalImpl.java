@@ -3,6 +3,7 @@ package com.mycompany.myapp.repository;
 import static org.springframework.data.relational.core.query.Criteria.where;
 
 import com.mycompany.myapp.domain.Restaurant;
+import com.mycompany.myapp.repository.rowmapper.ResponsableRestaurantRowMapper;
 import com.mycompany.myapp.repository.rowmapper.RestaurantRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
@@ -25,7 +26,7 @@ import org.springframework.data.relational.core.sql.Condition;
 import org.springframework.data.relational.core.sql.Conditions;
 import org.springframework.data.relational.core.sql.Expression;
 import org.springframework.data.relational.core.sql.Select;
-import org.springframework.data.relational.core.sql.SelectBuilder.SelectFromAndJoin;
+import org.springframework.data.relational.core.sql.SelectBuilder.SelectFromAndJoinCondition;
 import org.springframework.data.relational.core.sql.Table;
 import org.springframework.data.relational.repository.support.MappingRelationalEntityInformation;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -43,13 +44,16 @@ class RestaurantRepositoryInternalImpl extends SimpleR2dbcRepository<Restaurant,
     private final R2dbcEntityTemplate r2dbcEntityTemplate;
     private final EntityManager entityManager;
 
+    private final ResponsableRestaurantRowMapper responsablerestaurantMapper;
     private final RestaurantRowMapper restaurantMapper;
 
     private static final Table entityTable = Table.aliased("restaurant", EntityManager.ENTITY_ALIAS);
+    private static final Table ResponsableRestaurantTable = Table.aliased("ResponsableRestaurant", "ResponsableRestaurant");
 
     public RestaurantRepositoryInternalImpl(
         R2dbcEntityTemplate template,
         EntityManager entityManager,
+        ResponsableRestaurantRowMapper responsablerestaurantMapper,
         RestaurantRowMapper restaurantMapper,
         R2dbcEntityOperations entityOperations,
         R2dbcConverter converter
@@ -62,6 +66,7 @@ class RestaurantRepositoryInternalImpl extends SimpleR2dbcRepository<Restaurant,
         this.db = template.getDatabaseClient();
         this.r2dbcEntityTemplate = template;
         this.entityManager = entityManager;
+        this.responsablerestaurantMapper = responsablerestaurantMapper;
         this.restaurantMapper = restaurantMapper;
     }
 
@@ -72,7 +77,14 @@ class RestaurantRepositoryInternalImpl extends SimpleR2dbcRepository<Restaurant,
 
     RowsFetchSpec<Restaurant> createQuery(Pageable pageable, Condition whereClause) {
         List<Expression> columns = RestaurantSqlHelper.getColumns(entityTable, EntityManager.ENTITY_ALIAS);
-        SelectFromAndJoin selectFrom = Select.builder().select(columns).from(entityTable);
+        columns.addAll(ResponsableRestaurantSqlHelper.getColumns(ResponsableRestaurantTable, "ResponsableRestaurant"));
+        SelectFromAndJoinCondition selectFrom = Select
+            .builder()
+            .select(columns)
+            .from(entityTable)
+            .leftOuterJoin(ResponsableRestaurantTable)
+            .on(Column.create("responsable_restaurant_id", entityTable))
+            .equals(Column.create("id", ResponsableRestaurantTable));
         // we do not support Criteria here for now as of https://github.com/jhipster/generator-jhipster/issues/18269
         String select = entityManager.createSelect(selectFrom, Restaurant.class, pageable, whereClause);
         return db.sql(select).map(this::process);
@@ -89,8 +101,24 @@ class RestaurantRepositoryInternalImpl extends SimpleR2dbcRepository<Restaurant,
         return createQuery(null, whereClause).one();
     }
 
+    @Override
+    public Mono<Restaurant> findOneWithEagerRelationships(Long id) {
+        return findById(id);
+    }
+
+    @Override
+    public Flux<Restaurant> findAllWithEagerRelationships() {
+        return findAll();
+    }
+
+    @Override
+    public Flux<Restaurant> findAllWithEagerRelationships(Pageable page) {
+        return findAllBy(page);
+    }
+
     private Restaurant process(Row row, RowMetadata metadata) {
         Restaurant entity = restaurantMapper.apply(row, "e");
+        entity.setResponsableRestaurant(responsablerestaurantMapper.apply(row, "ResponsableRestaurant"));
         return entity;
     }
 
