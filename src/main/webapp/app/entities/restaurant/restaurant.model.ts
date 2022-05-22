@@ -1,5 +1,6 @@
 import dayjs from 'dayjs/esm';
 import { IMenu } from 'app/entities/menu/menu.model';
+import { ResponsableRestaurant } from '../responsable-restaurant/responsable-restaurant.model';
 
 export interface IRestaurant {
   id?: number;
@@ -9,6 +10,7 @@ export interface IRestaurant {
   dateOuverture?: dayjs.Dayjs | null;
   dateFermiture?: dayjs.Dayjs | null;
   commandes?: IMenu[] | null;
+  responsableRestaurant?: ResponsableRestaurant | null;
 }
 
 export class Restaurant implements IRestaurant {
@@ -19,7 +21,8 @@ export class Restaurant implements IRestaurant {
     public numRestaurant?: string | null,
     public dateOuverture?: dayjs.Dayjs | null,
     public dateFermiture?: dayjs.Dayjs | null,
-    public commandes?: IMenu[] | null
+    public commandes?: IMenu[] | null,
+    public responsableRestaurant?: ResponsableRestaurant | null
   ) {}
 }
 
