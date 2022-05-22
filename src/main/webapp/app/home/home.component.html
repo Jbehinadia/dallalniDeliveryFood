@@ -18,39 +18,28 @@
     <section class="section" id="restaurants">
       <div class="section-titles">
         <div class="section-title">catégories&nbsp;🍔</div>
-        <button class="btn btn-Delivery btn-round date-select">
-          <svg
-            t="1586139290823"
-            class="clock"
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="2356"
-            width="18"
-            height="18"
-          >
-            <path
-              d="M512 42.65984q95.66208 0 182.49728 37.1712t149.66784 100.00384 100.00384 149.66784 37.1712 182.49728-37.1712 182.49728-100.00384 149.66784-149.66784 100.00384-182.49728 37.1712-182.49728-37.1712-149.66784-100.00384-100.00384-149.66784-37.1712-182.49728 37.1712-182.49728 100.00384-149.66784 149.66784-100.00384 182.49728-37.1712zM512 128q-78.00832 0-149.17632 30.49472t-122.49088 81.83808-81.83808 122.49088-30.49472 149.17632 30.49472 149.17632 81.83808 122.49088 122.49088 81.83808 149.17632 30.49472 149.17632-30.49472 122.49088-81.83808 81.83808-122.49088 30.49472-149.17632-30.49472-149.17632-81.83808-122.49088-122.49088-81.83808-149.17632-30.49472zM512 213.34016q17.67424 0 30.16704 12.4928t12.4928 30.16704l0 238.32576 115.67104 115.32288q12.32896 12.32896 12.32896 30.33088t-12.32896 30.33088-30.33088 12.32896-30.33088-12.32896l-128-128q-12.32896-12.32896-12.32896-30.33088l0-256q0-17.67424 12.4928-30.16704t30.16704-12.4928z"
-              p-id="2357"
-            ></path>
-          </svg>
-          <span>Delivery: Now</span>
-          <svg
-            t="1586139384370"
-            class="chevron"
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="1254"
-            width="18"
-            height="18"
-          >
-            <path
-              d="M316.16 366.08 512 561.92 707.84 366.08 768 426.666667 512 682.666667 256 426.666667 316.16 366.08Z"
-              p-id="1255"
-            ></path>
-          </svg>
-        </button>
+        <div class="search-bar">
+          <div class="input-group" style="flex-wrap: nowrap">
+            <button class="btn">
+              <svg
+                t="1585652817188"
+                class="search"
+                viewBox="0 0 1024 1024"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                p-id="1034"
+                width="14"
+                height="14"
+              >
+                <path
+                  d="M888.703059 847.158363 733.373365 691.826622c50.040696-59.650565 80.190367-136.551002 80.190367-220.507136 0-189.613522-153.703661-343.318206-343.31616-343.318206-189.616592 0-343.31923 153.703661-343.31923 343.318206s153.703661 343.318206 343.31923 343.318206c85.053118 0 162.867368-30.94171 222.838228-82.163301l155.141406 155.141406c11.174504 11.17655 29.300326 11.17655 40.47483 0C899.859144 876.440269 899.859144 858.334913 888.703059 847.158363zM470.248595 757.416456c-158.006663 0-286.10004-128.090307-286.10004-286.097994 0-158.006663 128.093377-286.099017 286.10004-286.099017s286.079574 128.093377 286.079574 286.099017C756.32817 629.326149 628.254236 757.416456 470.248595 757.416456z"
+                  p-id="1035"
+                ></path>
+              </svg>
+            </button>
+            <input type="search" class="form-control" name="search" placeholder="Recherche" />
+          </div>
+        </div>
       </div>
       <div class="categories">
         <div class="row">
@@ -160,7 +149,7 @@
   <div class="col-md-4">
     <div class="order-panel">
       <header class="user-info">
-        <span style="font-weight: 600; margin-right: 3px">{{ client!.nomClient }}</span>
+        <span style="font-weight: 600; margin-right: 3px">{{ client?.nomClient! }}</span>
         <svg
           t="1586156234890"
           class="user"
@@ -180,7 +169,7 @@
       </header>
       <section class="section" id="order">
         <div class="section-title">Ma commande&nbsp;😎</div>
-        <div class="order-info">
+        <div class="order-info" *ngIf="client?.adresseClient">
           <div class="address">
             <input type="text" class="form-control form-adresse" [(ngModel)]="client!.adresseClient" />
           </div>
@@ -205,7 +194,7 @@
           </div>
         </div>
         <div class="buy-action">
-          <button class="btn btn-warning checkout-btn">
+          <button class="btn btn-warning checkout-btn" (click)="saveCommande()">
             confirmer<svg width="18" height="18" class="arrow" viewBox="0 0 24 24">
               <path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"></path>
             </svg>

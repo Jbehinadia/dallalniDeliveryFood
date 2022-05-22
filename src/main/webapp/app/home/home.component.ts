@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
@@ -19,6 +19,11 @@ import { ICommandeDetails } from 'app/entities/commande-details/commande-details
 import { CommandeService } from 'app/entities/commande/service/commande.service';
 import { IClient } from 'app/entities/client/client.model';
 import { ClientService } from 'app/entities/client/service/client.service';
+import Swals2 from 'sweetalert2';
+import dayjs from 'dayjs/esm';
+import { CommandeDetailsService } from 'app/entities/commande-details/service/commande-details.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { LoginComponent } from 'app/login/login.component';
 
 @Component({
   selector: 'jhi-home',
@@ -31,19 +36,21 @@ export class HomeComponent implements OnInit, OnDestroy {
   typePlats?: ITypePlat[] = [];
   originPlats?: IPlat[] = [];
   Plats?: IPlat[] = [];
-  commande?: ICommande = {};
   linesCmd?: ICommandeDetails[] = [];
   nbrCommandes = 0;
+  modalRefSignIn!: any;
 
   private readonly destroy$ = new Subject<void>();
 
   constructor(
     protected commandeService: CommandeService,
+    protected commandeDetailsService: CommandeDetailsService,
     protected clientService: ClientService,
     protected restaurantService: RestaurantService,
     protected typePlatService: TypePlatService,
     protected platService: PlatService,
     protected menuService: MenuService,
+    protected modalService: NgbModal,
     private accountService: AccountService,
     private router: Router
   ) {}
@@ -63,14 +70,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   getClientAndCommandes(account: Account): void {
     this.clientService.find(account.client!).subscribe((resClient: HttpResponse<IClient>) => {
       this.client = resClient.body!;
-      this.commandeService.query({}).subscribe(resCmd => (this.nbrCommandes = resCmd.body!.length));
+      this.commandeService
+        .query({
+          'client.equals': this.client.id,
+          size: 500,
+        })
+        .subscribe(resCmd => (this.nbrCommandes = resCmd.body!.length));
     });
   }
 
   getAllPlats(): void {
     this.originPlats = [];
     this.Plats = [];
-    this.platService.query().subscribe((resPlats: HttpResponse<IPlat[]>) => {
+    this.platService.query({ size: 1000 }).subscribe((resPlats: HttpResponse<IPlat[]>) => {
       this.originPlats = resPlats.body!;
       this.Plats = this.originPlats;
       this.Plats.forEach(plat => {
@@ -150,5 +162,58 @@ export class HomeComponent implements OnInit, OnDestroy {
       lineC.prix = lineC.prix! * lineC.qte!;
       this.totalCommande += lineC.prix;
     });
+  }
+
+  saveCommande(): void {
+    if (this.client?.id) {
+      if (!this.linesCmd!.length) {
+        Swals2.fire({
+          text: "S'il vous plait, choisissez au moins un plat!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ff8200',
+        }).then();
+      } else {
+        Swals2.fire({
+          title: 'Commande ' + this.totalCommande.toString() + ' DT',
+          text: 'vous êtes sûr de vouloir passer Commande?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ff8200',
+        }).then(result => {
+          if (result.value) {
+            const commande: ICommande = {};
+            commande.client = this.client;
+            commande.adresseCommande = this.client!.adresseClient;
+            commande.etat = 'reprise';
+            commande.dateCommande = dayjs(new Date());
+            commande.prixTotal = this.totalCommande;
+            commande.prixLivreson = 3;
+            commande.dateSortie = dayjs(new Date().setHours(new Date().getHours() + 1));
+            this.commandeService
+              .create(commande)
+              .pipe(map(res => res.body))
+              .subscribe(resCmd => {
+                this.nbrCommandes += 1;
+                this.linesCmd!.forEach(lineC => {
+                  lineC.commande = resCmd!;
+                  this.commandeDetailsService.create(lineC).subscribe();
+                });
+                Swals2.fire({
+                  title: 'Commande Reprise',
+                  html: 'Commande Reprise avec succès',
+                  icon: 'success',
+                }).then(() => {
+                  this.linesCmd = [];
+                  this.totalCommande = 0;
+                });
+              });
+          }
+        });
+      }
+    } else {
+      this.modalRefSignIn = this.modalService.open(LoginComponent, { size: 'lg' });
+      this.modalRefSignIn.componentInstance.parent = this;
+    }
   }
 }

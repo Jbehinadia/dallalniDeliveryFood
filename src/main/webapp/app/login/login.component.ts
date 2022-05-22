@@ -13,6 +13,7 @@ import { AccountService } from 'app/core/auth/account.service';
 export class LoginComponent implements OnInit, AfterViewInit {
   @ViewChild('username', { static: false })
   username!: ElementRef;
+  parent!: any;
 
   authenticationError = false;
 
@@ -54,7 +55,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
           this.authenticationError = false;
           if (!this.router.getCurrentNavigation()) {
             // There were no routing during login (eg from navigationToStoredUrl)
-            this.router.navigate(['']);
+            if (this.parent) {
+              this.parent.modalRefSignIn.close();
+            } else {
+              this.router.navigate(['']);
+            }
           }
         },
         error: () => (this.authenticationError = true),
