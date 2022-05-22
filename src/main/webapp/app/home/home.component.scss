@@ -311,11 +311,6 @@ body {
     align-items: center;
   }
 
-  .address-edit {
-    color: rgb(252, 213, 97);
-    text-decoration: none;
-  }
-
   .delivery {
     margin-top: 20px;
 
@@ -486,6 +481,15 @@ body {
   color: #212529;
   background-color: #fba374;
   border-color: #fba374;
+  outline: 0;
+  box-shadow: none;
+}
+
+.form-adresse {
+  background-color: #503e9d;
+  border-color: #503e9d;
+  color: rgb(252, 213, 97);
+  text-decoration: none;
   outline: 0;
   box-shadow: none;
 }

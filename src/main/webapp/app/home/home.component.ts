@@ -17,6 +17,8 @@ import { Restaurant } from 'app/entities/restaurant/restaurant.model';
 import { ICommande } from 'app/entities/commande/commande.model';
 import { ICommandeDetails } from 'app/entities/commande-details/commande-details.model';
 import { CommandeService } from 'app/entities/commande/service/commande.service';
+import { IClient } from 'app/entities/client/client.model';
+import { ClientService } from 'app/entities/client/service/client.service';
 
 @Component({
   selector: 'jhi-home',
@@ -24,7 +26,7 @@ import { CommandeService } from 'app/entities/commande/service/commande.service'
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  account: Account | null = null;
+  client: IClient | null = null;
   totalCommande = 0;
   typePlats?: ITypePlat[] = [];
   originPlats?: IPlat[] = [];
@@ -37,6 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     protected commandeService: CommandeService,
+    protected clientService: ClientService,
     protected restaurantService: RestaurantService,
     protected typePlatService: TypePlatService,
     protected platService: PlatService,
@@ -53,13 +56,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => {
-        this.account = account;
-        this.getUserCommandes();
+        this.getClientAndCommandes(account!);
       });
   }
 
-  getUserCommandes(): void {
-    this.commandeService.count({}).subscribe(resCmd => (this.nbrCommandes = resCmd.body!));
+  getClientAndCommandes(account: Account): void {
+    this.clientService.find(account.client!).subscribe((resClient: HttpResponse<IClient>) => {
+      this.client = resClient.body!;
+      this.commandeService.query({}).subscribe(resCmd => (this.nbrCommandes = resCmd.body!.length));
+    });
   }
 
   getAllPlats(): void {

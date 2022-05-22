@@ -160,7 +160,7 @@
   <div class="col-md-4">
     <div class="order-panel">
       <header class="user-info">
-        <span>{{ account?.firstName! }}</span>
+        <span style="font-weight: 600; margin-right: 3px">{{ client!.nomClient }}</span>
         <svg
           t="1586156234890"
           class="user"
@@ -182,8 +182,7 @@
         <div class="section-title">Ma commande&nbsp;😎</div>
         <div class="order-info">
           <div class="address">
-            <div class="address-name">625 St Marks Ave</div>
-            <a href="#" class="address-edit">modifier</a>
+            <input type="text" class="form-control form-adresse" [(ngModel)]="client!.adresseClient" />
           </div>
         </div>
         <ul class="food-list">

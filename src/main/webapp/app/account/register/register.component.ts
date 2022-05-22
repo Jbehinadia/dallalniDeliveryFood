@@ -14,6 +14,8 @@ import { LivreurService } from 'app/entities/livreur/service/livreur.service';
 import { IResponsableRestaurant, ResponsableRestaurant } from 'app/entities/responsable-restaurant/responsable-restaurant.model';
 import { ILivreur, Livreur } from 'app/entities/livreur/livreur.model';
 import { IUser, User } from 'app/admin/user-management/user-management.model';
+import dayjs from 'dayjs/esm';
+import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 
 @Component({
   selector: 'jhi-register',
@@ -95,6 +97,8 @@ export class RegisterComponent implements AfterViewInit {
             .subscribe(responsable => {
               this.responsable = responsable!;
               this.resto.responsableRestaurant = responsable!;
+              this.resto.dateOuverture = dayjs(new Date());
+              this.resto.dateFermiture = dayjs(new Date());
               this.restaurantService.create(this.resto).subscribe(() => this.registerUser());
             });
           break;
