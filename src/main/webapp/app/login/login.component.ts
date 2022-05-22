@@ -51,14 +51,22 @@ export class LoginComponent implements OnInit, AfterViewInit {
         rememberMe: this.loginForm.get('rememberMe')!.value,
       })
       .subscribe({
-        next: () => {
+        next: account => {
           this.authenticationError = false;
           if (!this.router.getCurrentNavigation()) {
             // There were no routing during login (eg from navigationToStoredUrl)
             if (this.parent) {
               this.parent.modalRefSignIn.close();
             } else {
-              this.router.navigate(['']);
+              if (account!.authorities.includes('ROLE_ADMIN')) {
+                this.router.navigate(['/admin/user-management']);
+              } else if (account!.authorities.includes('ROLE_Livreur')) {
+                this.router.navigate(['/commande']);
+              } else if (account!.authorities.includes('ROLE_Resto')) {
+                this.router.navigate(['/commande-details']);
+              } else {
+                this.router.navigate(['']);
+              }
             }
           }
         },
