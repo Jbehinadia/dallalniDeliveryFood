@@ -8,7 +8,12 @@ import { ICommande } from '../commande.model';
 
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { CommandeService } from '../service/commande.service';
-import { CommandeDeleteDialogComponent } from '../delete/commande-delete-dialog.component';
+import Swals2 from 'sweetalert2';
+import { LivreurService } from 'app/entities/livreur/service/livreur.service';
+import { ILivreur } from 'app/entities/livreur/livreur.model';
+import { Account } from 'app/core/auth/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+import { ClientService } from 'app/entities/client/service/client.service';
 
 @Component({
   selector: 'jhi-commande',
@@ -16,6 +21,7 @@ import { CommandeDeleteDialogComponent } from '../delete/commande-delete-dialog.
 })
 export class CommandeComponent implements OnInit {
   commandes?: ICommande[];
+  otherCommandes?: ICommande[];
   isLoading = false;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -23,13 +29,30 @@ export class CommandeComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  livreur: ILivreur = {};
 
   constructor(
+    protected clientService: ClientService,
     protected commandeService: CommandeService,
+    protected livreurService: LivreurService,
     protected activatedRoute: ActivatedRoute,
+    private accountService: AccountService,
     protected router: Router,
     protected modalService: NgbModal
   ) {}
+
+  ngOnInit(): void {
+    this.accountService.getAuthenticationState().subscribe(account => {
+      this.getLivreur(account!);
+    });
+  }
+
+  getLivreur(account: Account): void {
+    this.livreurService.find(account.livreur!).subscribe((resLivreur: HttpResponse<ILivreur>) => {
+      this.livreur = resLivreur.body!;
+      this.handleNavigation();
+    });
+  }
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     this.isLoading = true;
@@ -37,6 +60,7 @@ export class CommandeComponent implements OnInit {
 
     this.commandeService
       .query({
+        'livreurId.equals': this.livreur.id,
         page: pageToLoad - 1,
         size: this.itemsPerPage,
         sort: this.sort(),
@@ -53,23 +77,49 @@ export class CommandeComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
-    this.handleNavigation();
-  }
-
   trackId(_index: number, item: ICommande): number {
     return item.id!;
   }
 
+  associerCommande(commande: ICommande): void {
+    commande.livreur = this.livreur!;
+    Swals2.fire({
+      title: 'associer cette commande',
+      text: 'vous êtes sûr de vouloir associer cette commande?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ff8200',
+    }).then(() => this.commandeService.update(commande).subscribe());
+  }
+
   delete(commande: ICommande): void {
-    const modalRef = this.modalService.open(CommandeDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.commande = commande;
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed.subscribe(reason => {
-      if (reason === 'deleted') {
-        this.loadPage();
+    commande.livreur = {};
+    Swals2.fire({
+      title: 'dissocier cette commande',
+      text: 'vous êtes sûr de vouloir dissocier cette commande?',
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonColor: '#ff8200',
+    }).then(() => this.commandeService.update(commande).subscribe());
+  }
+
+  editPrixLivraison(cmd: ICommande): void {
+    Swals2.fire({
+      title: 'Modifier le Prix Livraison',
+      input: 'number',
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      showCancelButton: true,
+    }).then(res => {
+      if (res.value) {
+        cmd.prixLivreson = Number(res.value);
+        this.commandeService.update(cmd).subscribe();
       }
     });
+  }
+
+  loadOtherCommandes(): void {
+    this.otherCommandes = [];
   }
 
   protected sort(): string[] {
@@ -108,6 +158,9 @@ export class CommandeComponent implements OnInit {
       });
     }
     this.commandes = data ?? [];
+    this.commandes.forEach(cmd => {
+      this.clientService.find(cmd.client!.id!).subscribe(res => (cmd.client = res.body!));
+    });
     this.ngbPaginationPage = this.page;
   }
 

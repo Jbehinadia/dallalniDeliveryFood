@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.client = resClient.body!;
       this.commandeService
         .query({
-          'client.equals': this.client.id,
+          'clientId.equals': this.client.id,
           size: 500,
         })
         .subscribe(resCmd => (this.nbrCommandes = resCmd.body!.length));
