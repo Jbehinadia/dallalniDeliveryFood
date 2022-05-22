@@ -169,7 +169,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (!this.linesCmd!.length) {
         Swals2.fire({
           text: "S'il vous plait, choisissez au moins un plat!",
-          icon: 'warning',
+          type: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#ff8200',
         }).then();
@@ -177,7 +177,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         Swals2.fire({
           title: 'Commande ' + this.totalCommande.toString() + ' DT',
           text: 'vous êtes sûr de vouloir passer Commande?',
-          icon: 'warning',
+          type: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#ff8200',
         }).then(result => {
@@ -202,7 +202,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 Swals2.fire({
                   title: 'Commande Reprise',
                   html: 'Commande Reprise avec succès',
-                  icon: 'success',
+                  type: 'success',
                 }).then(() => {
                   this.linesCmd = [];
                   this.totalCommande = 0;

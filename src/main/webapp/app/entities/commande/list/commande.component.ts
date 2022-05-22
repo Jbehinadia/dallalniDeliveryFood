@@ -9,6 +9,7 @@ import { ICommande } from '../commande.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { CommandeService } from '../service/commande.service';
 import Swals2 from 'sweetalert2';
+import Swal from 'sweetalert2';
 import { LivreurService } from 'app/entities/livreur/service/livreur.service';
 import { ILivreur } from 'app/entities/livreur/livreur.model';
 import { Account } from 'app/core/auth/account.model';
@@ -86,7 +87,7 @@ export class CommandeComponent implements OnInit {
     Swals2.fire({
       title: 'associer cette commande',
       text: 'vous êtes sûr de vouloir associer cette commande?',
-      icon: 'warning',
+      type: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ff8200',
     }).then(() => this.commandeService.update(commande).subscribe());
@@ -97,7 +98,7 @@ export class CommandeComponent implements OnInit {
     Swals2.fire({
       title: 'dissocier cette commande',
       text: 'vous êtes sûr de vouloir dissocier cette commande?',
-      icon: 'error',
+      type: 'error',
       showCancelButton: true,
       confirmButtonColor: '#ff8200',
     }).then(() => this.commandeService.update(commande).subscribe());
@@ -115,6 +116,74 @@ export class CommandeComponent implements OnInit {
         cmd.prixLivreson = Number(res.value);
         this.commandeService.update(cmd).subscribe();
       }
+    });
+  }
+
+  modifierEtatCmd(cmd: ICommande): void {
+    Swal.fire({
+      title: "Modifier l'etat du commande",
+      html:
+        '  <strong></strong> ... <br/><br/>' +
+        '<button id="reprise" class="btn btn-info text-white">reprise</button><br /><br />' +
+        '<button id="annule" class="btn btn-danger text-white">annulée</button><br /><br />' +
+        '<button id="accepte" class="btn btn-success text-white">acceptée</button><br /><br />' +
+        '<button id="demande" class="btn btn-secondary text-white">demandée</button><br /><br />' +
+        '<button id="prepare" class="btn btn-warning text-white">preparée</button><br /><br />' +
+        '<button id="livre" class="btn btn-success text-white">livrée</button><br /><br />' +
+        '',
+      onBeforeOpen: () => {
+        const content = Swal.getContent();
+        const $ = content.querySelector.bind(content);
+
+        const reprise = $('#reprise');
+        const annule = $('#annule');
+        const accepte = $('#accepte');
+        const demande = $('#demande');
+        const prepare = $('#prepare');
+        const livre = $('#livre');
+
+        Swal.showLoading();
+
+        function toggleButtons(): void {
+          Swal.close();
+        }
+
+        reprise!.addEventListener('click', () => {
+          cmd.etat = 'reprise';
+          this.commandeService.update(cmd).subscribe();
+          toggleButtons();
+        });
+
+        annule!.addEventListener('click', () => {
+          cmd.etat = 'annule';
+          this.commandeService.update(cmd).subscribe();
+          toggleButtons();
+        });
+
+        accepte!.addEventListener('click', () => {
+          cmd.etat = 'accepte';
+          this.commandeService.update(cmd).subscribe();
+          toggleButtons();
+        });
+
+        demande!.addEventListener('click', () => {
+          cmd.etat = 'demande';
+          this.commandeService.update(cmd).subscribe();
+          toggleButtons();
+        });
+
+        prepare!.addEventListener('click', () => {
+          cmd.etat = 'prepare';
+          this.commandeService.update(cmd).subscribe();
+          toggleButtons();
+        });
+
+        livre!.addEventListener('click', () => {
+          cmd.etat = 'livre';
+          this.commandeService.update(cmd).subscribe();
+          toggleButtons();
+        });
+      },
     });
   }
 
