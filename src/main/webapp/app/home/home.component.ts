@@ -24,6 +24,7 @@ import dayjs from 'dayjs/esm';
 import { CommandeDetailsService } from 'app/entities/commande-details/service/commande-details.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoginComponent } from 'app/login/login.component';
+import { CommandePourClientComponent } from 'app/home/list-pour-client/commande-pour-client.component';
 
 @Component({
   selector: 'jhi-home',
@@ -39,6 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   linesCmd?: ICommandeDetails[] = [];
   nbrCommandes = 0;
   modalRefSignIn!: any;
+  modalRef!: any;
 
   private readonly destroy$ = new Subject<void>();
 
@@ -214,5 +216,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.modalRefSignIn = this.modalService.open(LoginComponent, { size: 'lg' });
       this.modalRefSignIn.componentInstance.parent = this;
     }
+  }
+
+  openMyCommandes(): void {
+    this.modalRef = this.modalService.open(CommandePourClientComponent as Component, { size: 'lg' });
+    this.modalRef.componentInstance.parent = this;
+    this.modalRef.componentInstance.client = this.client!;
   }
 }
