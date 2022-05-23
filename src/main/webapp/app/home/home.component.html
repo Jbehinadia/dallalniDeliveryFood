@@ -182,7 +182,7 @@
             </div>
             <div class="col-md-4 food-name">{{ line.plat!.nomPlat }}</div>
             <div class="col-md-2 food-price text-nowrap">
-              <span>{{ line.prix }} DT</span>
+              <span>{{ line.prix! * line.qte! }} DT</span>
             </div>
             <div class="col-md-1 text-danger" (click)="deleteLineCmd(line)"><fa-icon icon="times"></fa-icon></div>
           </li>

@@ -1,19 +1,10 @@
 <div>
   <h2 id="page-heading" data-cy="CommandeDetailsHeading">
-    <span>Commande Details</span>
+    <span>Mes Commande</span>
 
     <div class="d-flex justify-content-end">
       <button class="btn btn-info me-2 text-white" (click)="loadPage()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-commande-details text-white"
-        [routerLink]="['/commande-details/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
       </button>
     </div>
   </h2>
@@ -26,53 +17,61 @@
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="prix"><span>Prix</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="etat"><span>Etat</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="commande.id"><span>Commande</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="plat.id"><span>Plat</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col"></th>
+          <th scope="col" jhiSortBy="prix"><span>Prix</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="prix"><span>Quantité</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="prix"><span>Net</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="etat"><span>Etat</span> <fa-icon icon="sort"></fa-icon></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let commandeDetails of commandeDetails; trackBy: trackId" data-cy="entityTable">
           <td>
-            <span>{{ commandeDetails.prix }}DT</span>
-          </td>
-          <td>{{ commandeDetails.etat }}</td>
-          <td>
-            <div *ngIf="commandeDetails.commande">
-              <a [routerLink]="['/commande', commandeDetails.commande?.id, 'view']">{{ commandeDetails.commande?.id }}</a>
-            </div>
-          </td>
-          <td>
             <div *ngIf="commandeDetails.plat">
-              <a [routerLink]="['/plat', commandeDetails.plat?.id, 'view']">{{ commandeDetails.plat?.id }}</a>
+              <a [routerLink]="['/plat', commandeDetails.plat?.id, 'view']">{{ commandeDetails.plat?.nomPlat }}</a>
             </div>
           </td>
-          <td class="text-end">
-            <div class="btn-group">
-              <button
-                type="submit"
-                [routerLink]="['/commande-details', commandeDetails.id, 'view']"
-                class="btn btn-info btn-sm text-white"
-                data-cy="entityDetailsButton"
-              >
-                <fa-icon icon="eye"></fa-icon>
-              </button>
+          <td>
+            <span style="font-weight: 600">{{ commandeDetails.prix }}DT</span>
+          </td>
+          <td>
+            <span class="text-info" style="font-weight: 600">{{ commandeDetails.qte }}</span>
+          </td>
+          <td>
+            <span class="text-success" style="font-weight: 600">{{ commandeDetails.prix! * commandeDetails.qte! }}DT</span>
+          </td>
 
-              <button
-                type="submit"
-                [routerLink]="['/commande-details', commandeDetails.id, 'edit']"
-                class="btn btn-primary btn-sm text-white"
-                data-cy="entityEditButton"
-              >
-                <fa-icon icon="pencil-alt"></fa-icon>
-              </button>
-
-              <button type="submit" (click)="delete(commandeDetails)" class="btn btn-danger btn-sm text-white" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-              </button>
-            </div>
+          <td>
+            <button (click)="modifierEtatCmd(commandeDetails)" *ngIf="commandeDetails.etat === 'reprise'" class="btn btn-info text-white">
+              reprise
+            </button>
+            <button (click)="modifierEtatCmd(commandeDetails)" *ngIf="commandeDetails.etat === 'annule'" class="btn btn-danger text-white">
+              annulée
+            </button>
+            <button
+              (click)="modifierEtatCmd(commandeDetails)"
+              *ngIf="commandeDetails.etat === 'accepte'"
+              class="btn btn-success text-white"
+            >
+              acceptée
+            </button>
+            <button
+              (click)="modifierEtatCmd(commandeDetails)"
+              *ngIf="commandeDetails.etat === 'demande'"
+              class="btn btn-secondary text-white"
+            >
+              demandée
+            </button>
+            <button
+              (click)="modifierEtatCmd(commandeDetails)"
+              *ngIf="commandeDetails.etat === 'prepare'"
+              class="btn btn-warning text-white"
+            >
+              preparée
+            </button>
+            <button (click)="modifierEtatCmd(commandeDetails)" *ngIf="commandeDetails.etat === 'livre'" class="btn btn-success text-white">
+              livrée
+            </button>
           </td>
         </tr>
       </tbody>

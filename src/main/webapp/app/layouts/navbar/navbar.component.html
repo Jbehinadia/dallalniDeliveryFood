@@ -32,6 +32,14 @@
             </span>
           </a>
         </li>
+        <li *jhiHasAnyAuthority="'ROLE_Resto'" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="nav-link" routerLink="/commande-details" (click)="collapseNavbar()">
+            <span>
+              <span>Commandes</span>
+              <fa-icon icon="list"></fa-icon>
+            </span>
+          </a>
+        </li>
 
         <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
         <li

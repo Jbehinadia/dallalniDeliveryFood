@@ -135,7 +135,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       const line = this.linesCmd!.find(lineC => lineC.plat!.id === plat.id);
       line!.qte! += 1;
-      line!.prix = line!.prix! * line!.qte!;
     }
 
     this.linesCmd!.forEach(lineC => {
@@ -159,8 +158,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.totalCommande = 0;
     this.linesCmd!.forEach(lineC => {
       lineC.prix = lineC.plat!.remisePerc ? lineC.plat!.prix! - (lineC.plat!.prix! * lineC.plat!.remisePerc) / 100 : lineC.plat!.prix;
-      lineC.prix = lineC.prix! * lineC.qte!;
-      this.totalCommande += lineC.prix;
+      this.totalCommande += lineC.prix! * lineC.qte!;
     });
   }
 
@@ -197,6 +195,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.nbrCommandes += 1;
                 this.linesCmd!.forEach(lineC => {
                   lineC.commande = resCmd!;
+                  lineC.etat = 'reprise';
                   this.commandeDetailsService.create(lineC).subscribe();
                 });
                 Swals2.fire({
