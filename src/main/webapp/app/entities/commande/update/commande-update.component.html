@@ -5,6 +5,8 @@
       <h2 id="jhi-commande-heading" data-cy="CommandeCreateUpdateHeading" *ngIf="editForm.get('id')!.value">Modifier un Commande</h2>
 
       <div>
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
         <div class="row mb-3">
           <label class="form-label" for="field_adresseCommande">Adresse Commande</label>
           <input

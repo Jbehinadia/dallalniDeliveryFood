@@ -3,6 +3,8 @@
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="myUserLabel" *ngIf="!editForm.get('id')!.value">Ajouter un utilisateur</h2>
       <h2 id="myUserLabel" *ngIf="editForm.get('id')!.value">Modifier un utilisateur</h2>
+      <jhi-alert-error></jhi-alert-error>
+      <jhi-alert></jhi-alert>
       <span *ngIf="user.client" class="badge badge-pill badge-info">Client</span>
       <span *ngIf="user.livreur" class="badge badge-pill badge-success">Livreur</span>
       <span *ngIf="user.responsable" class="badge badge-pill badge-danger">Responsable Restaurant</span>

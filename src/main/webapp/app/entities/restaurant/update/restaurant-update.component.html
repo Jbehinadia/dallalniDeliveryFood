@@ -3,7 +3,8 @@
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
       <h2 id="jhi-restaurant-heading" data-cy="RestaurantCreateUpdateHeading" *ngIf="!restaurant.id">Ajouter un Restaurant</h2>
       <h2 id="jhi-restaurant-heading" data-cy="RestaurantCreateUpdateHeading" *ngIf="restaurant.id">Modifier Restaurant</h2>
-
+      <jhi-alert-error></jhi-alert-error>
+      <jhi-alert></jhi-alert>
       <div>
         <div class="row mb-3">
           <label class="form-label" for="field_nomRestaurant">Nom</label>

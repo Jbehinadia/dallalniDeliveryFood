@@ -3,7 +3,8 @@
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="jhi-livreur-heading" data-cy="LivreurCreateUpdateHeading" *ngIf="!editForm.get('id')!.value">Ajouter un Livreur</h2>
       <h2 id="jhi-livreur-heading" data-cy="LivreurCreateUpdateHeading" *ngIf="editForm.get('id')!.value">Modifier un Livreur</h2>
-
+      <jhi-alert-error></jhi-alert-error>
+      <jhi-alert></jhi-alert>
       <div>
         <div class="row mb-3">
           <label class="form-label" for="field_nomLivreur">Nom Livreur</label>
