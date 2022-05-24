@@ -26,7 +26,7 @@ export class AlertErrorComponent implements OnDestroy {
       switch (httpErrorResponse.status) {
         // connection refused, server not reachable
         case 0:
-          this.addErrorAlert('Server not reachable');
+          this.addErrorAlert('Serveur inaccessible');
           break;
 
         case 400: {
