@@ -1,9 +1,5 @@
 {
-  "applications": "*",
-  "changelogDate": "20220516214144",
-  "dto": "mapstruct",
-  "embedded": false,
-  "entityTableName": "type_plat",
+  "name": "TypePlat",
   "fields": [
     {
       "fieldName": "type",
@@ -15,11 +11,14 @@
       "fieldTypeBlobContent": "text"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
-  "name": "TypePlat",
+  "changelogDate": "20220516214144",
+  "entityTableName": "type_plat",
+  "applications": "*",
   "pagination": "pagination",
+  "service": "serviceImpl",
+  "dto": "mapstruct",
+  "fluentMethods": true,
   "readOnly": false,
-  "relationships": [],
-  "service": "serviceImpl"
+  "embedded": false,
+  "jpaMetamodelFiltering": true
 }

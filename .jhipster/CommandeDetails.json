@@ -1,9 +1,5 @@
 {
-  "applications": "*",
-  "changelogDate": "20220516214146",
-  "dto": "mapstruct",
-  "embedded": false,
-  "entityTableName": "commande_details",
+  "name": "CommandeDetails",
   "fields": [
     {
       "fieldName": "prix",
@@ -18,11 +14,6 @@
       "fieldType": "Double"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
-  "name": "CommandeDetails",
-  "pagination": "pagination",
-  "readOnly": false,
   "relationships": [
     {
       "otherEntityName": "commande",
@@ -38,5 +29,14 @@
       "relationshipType": "many-to-one"
     }
   ],
-  "service": "serviceImpl"
+  "changelogDate": "20220516214146",
+  "entityTableName": "commande_details",
+  "applications": "*",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "dto": "mapstruct",
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "jpaMetamodelFiltering": true
 }

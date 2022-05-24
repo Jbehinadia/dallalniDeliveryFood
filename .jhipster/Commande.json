@@ -1,9 +1,5 @@
 {
-  "applications": "*",
-  "changelogDate": "20220516214145",
-  "dto": "mapstruct",
-  "embedded": false,
-  "entityTableName": "commande",
+  "name": "Commande",
   "fields": [
     {
       "fieldName": "adresseCommande",
@@ -38,11 +34,7 @@
       "fieldType": "Instant"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
-  "name": "Commande",
-  "pagination": "pagination",
-  "readOnly": false,
+
   "relationships": [
     {
       "otherEntityField": "nomLivreur",
@@ -58,5 +50,14 @@
       "relationshipType": "many-to-one"
     }
   ],
-  "service": "serviceImpl"
+  "changelogDate": "20220516214145",
+  "entityTableName": "commande",
+  "applications": "*",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "dto": "mapstruct",
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "jpaMetamodelFiltering": true
 }

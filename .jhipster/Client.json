@@ -1,9 +1,5 @@
 {
-  "applications": "*",
-  "changelogDate": "20220516214138",
-  "dto": "mapstruct",
-  "embedded": false,
-  "entityTableName": "client",
+  "name": "Client",
   "fields": [
     {
       "fieldName": "nomClient",
@@ -22,11 +18,15 @@
       "fieldType": "String"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
-  "name": "Client",
-  "pagination": "pagination",
-  "readOnly": false,
   "relationships": [],
-  "service": "serviceImpl"
+  "changelogDate": "20220516214138",
+  "entityTableName": "client",
+  "applications": "*",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "dto": "mapstruct",
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "jpaMetamodelFiltering": true
 }

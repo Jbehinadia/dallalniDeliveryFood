@@ -1,9 +1,5 @@
 {
-  "applications": "*",
-  "changelogDate": "20220516214139",
-  "dto": "mapstruct",
-  "embedded": false,
-  "entityTableName": "ResponsableRestaurant",
+  "name": "ResponsableRestaurant",
   "fields": [
     {
       "fieldName": "nomResponsable",
@@ -22,11 +18,15 @@
       "fieldType": "String"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
-  "name": "ResponsableRestaurant",
-  "pagination": "pagination",
-  "readOnly": false,
   "relationships": [],
-  "service": "serviceImpl"
+  "changelogDate": "20220516214139",
+  "entityTableName": "ResponsableRestaurant",
+  "applications": "*",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "dto": "mapstruct",
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "jpaMetamodelFiltering": true
 }

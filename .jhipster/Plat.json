@@ -1,9 +1,5 @@
 {
-  "applications": "*",
-  "changelogDate": "20220516214143",
-  "dto": "mapstruct",
-  "embedded": false,
-  "entityTableName": "plat",
+  "name": "Plat",
   "fields": [
     {
       "fieldName": "nomPlat",
@@ -27,11 +23,6 @@
       "fieldType": "Double"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
-  "name": "Plat",
-  "pagination": "pagination",
-  "readOnly": false,
   "relationships": [
     {
       "otherEntityField": "nomMenu",
@@ -48,5 +39,14 @@
       "relationshipType": "many-to-one"
     }
   ],
-  "service": "serviceImpl"
+  "changelogDate": "20220516214143",
+  "entityTableName": "plat",
+  "applications": "*",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "dto": "mapstruct",
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "jpaMetamodelFiltering": true
 }

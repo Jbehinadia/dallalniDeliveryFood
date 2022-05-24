@@ -1,9 +1,5 @@
 {
-  "applications": "*",
-  "changelogDate": "20220516214141",
-  "dto": "mapstruct",
-  "embedded": false,
-  "entityTableName": "livreur",
+  "name": "Livreur",
   "fields": [
     {
       "fieldName": "nomLivreur",
@@ -22,11 +18,15 @@
       "fieldType": "String"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
-  "name": "Livreur",
-  "pagination": "pagination",
-  "readOnly": false,
   "relationships": [],
-  "service": "serviceImpl"
+  "changelogDate": "20220516214141",
+  "entityTableName": "livreur",
+  "applications": "*",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "dto": "mapstruct",
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "jpaMetamodelFiltering": true
 }
