@@ -5,6 +5,7 @@
       <h2 id="jhi-client-heading" data-cy="ClientCreateUpdateHeading" *ngIf="editForm.get('id')!.value">modifier Client</h2>
 
       <div>
+        <jhi-alert-error></jhi-alert-error>
         <div class="row mb-3">
           <label class="form-label" for="field_nomClient">Nom Client</label>
           <input type="text" class="form-control" name="nomClient" id="field_nomClient" data-cy="nomClient" formControlName="nomClient" />
