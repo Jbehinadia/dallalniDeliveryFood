@@ -2,45 +2,38 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import javax.persistence.*;
 
 /**
  * A CommandeDetails.
  */
-@Table("commande_details")
+@Entity
+@Table(name = "commande_details")
 public class CommandeDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column("id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column("prix")
+    @Column(name = "prix")
     private Double prix;
 
-    @Column("etat")
+    @Column(name = "etat")
     private String etat;
 
-    @Column("qte")
+    @Column(name = "qte")
     private Double qte;
 
-    @Transient
+    @ManyToOne
     @JsonIgnoreProperties(value = { "livreur", "client" }, allowSetters = true)
     private Commande commande;
 
-    @Transient
+    @ManyToOne
     @JsonIgnoreProperties(value = { "menu", "typePlat" }, allowSetters = true)
     private Plat plat;
-
-    @Column("commande_id")
-    private Long commandeId;
-
-    @Column("plat_id")
-    private Long platId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -102,7 +95,6 @@ public class CommandeDetails implements Serializable {
 
     public void setCommande(Commande commande) {
         this.commande = commande;
-        this.commandeId = commande != null ? commande.getId() : null;
     }
 
     public CommandeDetails commande(Commande commande) {
@@ -116,28 +108,11 @@ public class CommandeDetails implements Serializable {
 
     public void setPlat(Plat plat) {
         this.plat = plat;
-        this.platId = plat != null ? plat.getId() : null;
     }
 
     public CommandeDetails plat(Plat plat) {
         this.setPlat(plat);
         return this;
-    }
-
-    public Long getCommandeId() {
-        return this.commandeId;
-    }
-
-    public void setCommandeId(Long commande) {
-        this.commandeId = commande;
-    }
-
-    public Long getPlatId() {
-        return this.platId;
-    }
-
-    public void setPlatId(Long plat) {
-        this.platId = plat;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

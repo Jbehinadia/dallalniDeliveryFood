@@ -34,7 +34,6 @@
       "fieldType": "Instant"
     }
   ],
-
   "relationships": [
     {
       "otherEntityField": "nomLivreur",

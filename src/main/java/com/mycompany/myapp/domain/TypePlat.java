@@ -1,27 +1,27 @@
 package com.mycompany.myapp.domain;
 
 import java.io.Serializable;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import javax.persistence.*;
 
 /**
  * A TypePlat.
  */
-@Table("type_plat")
+@Entity
+@Table(name = "type_plat")
 public class TypePlat implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column("id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column("type")
+    @Column(name = "type")
     private String type;
 
-    @Column("image_path")
+    @Lob
+    @Column(name = "image_path")
     private String imagePath;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

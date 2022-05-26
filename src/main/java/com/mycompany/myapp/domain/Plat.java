@@ -2,50 +2,44 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import javax.persistence.*;
 
 /**
  * A Plat.
  */
-@Table("plat")
+@Entity
+@Table(name = "plat")
 public class Plat implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column("id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column("nom_plat")
+    @Column(name = "nom_plat")
     private String nomPlat;
 
-    @Column("image_path")
+    @Lob
+    @Column(name = "image_path")
     private String imagePath;
 
-    @Column("prix")
+    @Column(name = "prix")
     private Double prix;
 
-    @Column("remise_perc")
+    @Column(name = "remise_perc")
     private Double remisePerc;
 
-    @Column("remice_val")
+    @Column(name = "remice_val")
     private Double remiceVal;
 
-    @Transient
+    @ManyToOne
     @JsonIgnoreProperties(value = { "restaurant" }, allowSetters = true)
     private Menu menu;
 
-    @Transient
+    @ManyToOne
     private TypePlat typePlat;
-
-    @Column("menu_id")
-    private Long menuId;
-
-    @Column("type_plat_id")
-    private Long typePlatId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -133,7 +127,6 @@ public class Plat implements Serializable {
 
     public void setMenu(Menu menu) {
         this.menu = menu;
-        this.menuId = menu != null ? menu.getId() : null;
     }
 
     public Plat menu(Menu menu) {
@@ -147,28 +140,11 @@ public class Plat implements Serializable {
 
     public void setTypePlat(TypePlat typePlat) {
         this.typePlat = typePlat;
-        this.typePlatId = typePlat != null ? typePlat.getId() : null;
     }
 
     public Plat typePlat(TypePlat typePlat) {
         this.setTypePlat(typePlat);
         return this;
-    }
-
-    public Long getMenuId() {
-        return this.menuId;
-    }
-
-    public void setMenuId(Long menu) {
-        this.menuId = menu;
-    }
-
-    public Long getTypePlatId() {
-        return this.typePlatId;
-    }
-
-    public void setTypePlatId(Long typePlat) {
-        this.typePlatId = typePlat;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

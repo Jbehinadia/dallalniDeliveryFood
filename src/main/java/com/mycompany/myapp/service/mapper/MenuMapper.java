@@ -1,22 +1,20 @@
 package com.mycompany.myapp.service.mapper;
 
-import com.mycompany.myapp.domain.Menu;
-import com.mycompany.myapp.domain.Restaurant;
+import com.mycompany.myapp.domain.*;
 import com.mycompany.myapp.service.dto.MenuDTO;
-import com.mycompany.myapp.service.dto.RestaurantDTO;
 import org.mapstruct.*;
 
 /**
  * Mapper for the entity {@link Menu} and its DTO {@link MenuDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { RestaurantMapper.class })
 public interface MenuMapper extends EntityMapper<MenuDTO, Menu> {
-    @Mapping(target = "restaurant", source = "restaurant", qualifiedByName = "restaurantNomRestaurant")
+    @Mapping(target = "restaurant", source = "restaurant", qualifiedByName = "nomRestaurant")
     MenuDTO toDto(Menu s);
 
-    @Named("restaurantNomRestaurant")
+    @Named("nomMenu")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "nomRestaurant", source = "nomRestaurant")
-    RestaurantDTO toDtoRestaurantNomRestaurant(Restaurant restaurant);
+    @Mapping(target = "nomMenu", source = "nomMenu")
+    MenuDTO toDtoNomMenu(Menu menu);
 }

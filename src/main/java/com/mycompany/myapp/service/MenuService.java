@@ -1,9 +1,9 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.service.dto.MenuDTO;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Service Interface for managing {@link com.mycompany.myapp.domain.Menu}.
@@ -15,15 +15,7 @@ public interface MenuService {
      * @param menuDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<MenuDTO> save(MenuDTO menuDTO);
-
-    /**
-     * Updates a menu.
-     *
-     * @param menuDTO the entity to update.
-     * @return the persisted entity.
-     */
-    Mono<MenuDTO> update(MenuDTO menuDTO);
+    MenuDTO save(MenuDTO menuDTO);
 
     /**
      * Partially updates a menu.
@@ -31,7 +23,7 @@ public interface MenuService {
      * @param menuDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<MenuDTO> partialUpdate(MenuDTO menuDTO);
+    Optional<MenuDTO> partialUpdate(MenuDTO menuDTO);
 
     /**
      * Get all the menus.
@@ -39,22 +31,7 @@ public interface MenuService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<MenuDTO> findAll(Pageable pageable);
-
-    /**
-     * Get all the menus with eager load of many-to-many relationships.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Flux<MenuDTO> findAllWithEagerRelationships(Pageable pageable);
-
-    /**
-     * Returns the number of menus available.
-     * @return the number of entities in the database.
-     *
-     */
-    Mono<Long> countAll();
+    Page<MenuDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" menu.
@@ -62,13 +39,12 @@ public interface MenuService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<MenuDTO> findOne(Long id);
+    Optional<MenuDTO> findOne(Long id);
 
     /**
      * Delete the "id" menu.
      *
      * @param id the id of the entity.
-     * @return a Mono to signal the deletion
      */
-    Mono<Void> delete(Long id);
+    void delete(Long id);
 }

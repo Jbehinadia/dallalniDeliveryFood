@@ -7,7 +7,7 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SPRING_R2DBC_URL=r2dbc:mysql://dallalnideliveryfood-mysql:3306/dallalnideliveryfood?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://dallalnideliveryfood-mysql:3306/dallalnideliveryfood?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
       - SPRING_LIQUIBASE_URL=jdbc:mysql://dallalnideliveryfood-mysql:3306/dallalnideliveryfood?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
     # If you want to expose these ports outside your dev PC,
@@ -15,7 +15,7 @@ services:
     ports:
       - 127.0.0.1:8080:8080
   dallalnideliveryfood-mysql:
-    image: mysql:8.0.28
+    image: mysql:8.0.26
     # volumes:
     #   - ~/volumes/jhipster/dallalniDeliveryFood/mysql/:/var/lib/mysql/
     environment:

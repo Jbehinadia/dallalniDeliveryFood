@@ -20,5 +20,6 @@
   "fluentMethods": true,
   "readOnly": false,
   "embedded": false,
-  "jpaMetamodelFiltering": true
+  "jpaMetamodelFiltering": true,
+  "relationships": []
 }

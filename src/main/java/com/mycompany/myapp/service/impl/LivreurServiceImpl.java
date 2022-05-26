@@ -5,13 +5,13 @@ import com.mycompany.myapp.repository.LivreurRepository;
 import com.mycompany.myapp.service.LivreurService;
 import com.mycompany.myapp.service.dto.LivreurDTO;
 import com.mycompany.myapp.service.mapper.LivreurMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Service Implementation for managing {@link Livreur}.
@@ -32,19 +32,15 @@ public class LivreurServiceImpl implements LivreurService {
     }
 
     @Override
-    public Mono<LivreurDTO> save(LivreurDTO livreurDTO) {
+    public LivreurDTO save(LivreurDTO livreurDTO) {
         log.debug("Request to save Livreur : {}", livreurDTO);
-        return livreurRepository.save(livreurMapper.toEntity(livreurDTO)).map(livreurMapper::toDto);
+        Livreur livreur = livreurMapper.toEntity(livreurDTO);
+        livreur = livreurRepository.save(livreur);
+        return livreurMapper.toDto(livreur);
     }
 
     @Override
-    public Mono<LivreurDTO> update(LivreurDTO livreurDTO) {
-        log.debug("Request to save Livreur : {}", livreurDTO);
-        return livreurRepository.save(livreurMapper.toEntity(livreurDTO)).map(livreurMapper::toDto);
-    }
-
-    @Override
-    public Mono<LivreurDTO> partialUpdate(LivreurDTO livreurDTO) {
+    public Optional<LivreurDTO> partialUpdate(LivreurDTO livreurDTO) {
         log.debug("Request to partially update Livreur : {}", livreurDTO);
 
         return livreurRepository
@@ -54,31 +50,27 @@ public class LivreurServiceImpl implements LivreurService {
 
                 return existingLivreur;
             })
-            .flatMap(livreurRepository::save)
+            .map(livreurRepository::save)
             .map(livreurMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<LivreurDTO> findAll(Pageable pageable) {
+    public Page<LivreurDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Livreurs");
-        return livreurRepository.findAllBy(pageable).map(livreurMapper::toDto);
-    }
-
-    public Mono<Long> countAll() {
-        return livreurRepository.count();
+        return livreurRepository.findAll(pageable).map(livreurMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<LivreurDTO> findOne(Long id) {
+    public Optional<LivreurDTO> findOne(Long id) {
         log.debug("Request to get Livreur : {}", id);
         return livreurRepository.findById(id).map(livreurMapper::toDto);
     }
 
     @Override
-    public Mono<Void> delete(Long id) {
+    public void delete(Long id) {
         log.debug("Request to delete Livreur : {}", id);
-        return livreurRepository.deleteById(id);
+        livreurRepository.deleteById(id);
     }
 }

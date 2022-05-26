@@ -1,12 +1,13 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.repository.LivreurRepository;
+import com.mycompany.myapp.service.LivreurQueryService;
 import com.mycompany.myapp.service.LivreurService;
+import com.mycompany.myapp.service.criteria.LivreurCriteria;
 import com.mycompany.myapp.service.dto.LivreurDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,21 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
-import tech.jhipster.web.util.reactive.ResponseUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.mycompany.myapp.domain.Livreur}.
@@ -48,9 +43,12 @@ public class LivreurResource {
 
     private final LivreurRepository livreurRepository;
 
-    public LivreurResource(LivreurService livreurService, LivreurRepository livreurRepository) {
+    private final LivreurQueryService livreurQueryService;
+
+    public LivreurResource(LivreurService livreurService, LivreurRepository livreurRepository, LivreurQueryService livreurQueryService) {
         this.livreurService = livreurService;
         this.livreurRepository = livreurRepository;
+        this.livreurQueryService = livreurQueryService;
     }
 
     /**
@@ -61,23 +59,16 @@ public class LivreurResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/livreurs")
-    public Mono<ResponseEntity<LivreurDTO>> createLivreur(@RequestBody LivreurDTO livreurDTO) throws URISyntaxException {
+    public ResponseEntity<LivreurDTO> createLivreur(@RequestBody LivreurDTO livreurDTO) throws URISyntaxException {
         log.debug("REST request to save Livreur : {}", livreurDTO);
         if (livreurDTO.getId() != null) {
             throw new BadRequestAlertException("A new livreur cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        return livreurService
-            .save(livreurDTO)
-            .map(result -> {
-                try {
-                    return ResponseEntity
-                        .created(new URI("/api/livreurs/" + result.getId()))
-                        .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-                        .body(result);
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+        LivreurDTO result = livreurService.save(livreurDTO);
+        return ResponseEntity
+            .created(new URI("/api/livreurs/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -91,7 +82,7 @@ public class LivreurResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/livreurs/{id}")
-    public Mono<ResponseEntity<LivreurDTO>> updateLivreur(
+    public ResponseEntity<LivreurDTO> updateLivreur(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody LivreurDTO livreurDTO
     ) throws URISyntaxException {
@@ -103,23 +94,15 @@ public class LivreurResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        return livreurRepository
-            .existsById(id)
-            .flatMap(exists -> {
-                if (!exists) {
-                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
-                }
+        if (!livreurRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
 
-                return livreurService
-                    .update(livreurDTO)
-                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
-                    .map(result ->
-                        ResponseEntity
-                            .ok()
-                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-                            .body(result)
-                    );
-            });
+        LivreurDTO result = livreurService.save(livreurDTO);
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, livreurDTO.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -134,7 +117,7 @@ public class LivreurResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/livreurs/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<LivreurDTO>> partialUpdateLivreur(
+    public ResponseEntity<LivreurDTO> partialUpdateLivreur(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody LivreurDTO livreurDTO
     ) throws URISyntaxException {
@@ -146,53 +129,43 @@ public class LivreurResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        return livreurRepository
-            .existsById(id)
-            .flatMap(exists -> {
-                if (!exists) {
-                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
-                }
+        if (!livreurRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
 
-                Mono<LivreurDTO> result = livreurService.partialUpdate(livreurDTO);
+        Optional<LivreurDTO> result = livreurService.partialUpdate(livreurDTO);
 
-                return result
-                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
-                    .map(res ->
-                        ResponseEntity
-                            .ok()
-                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, res.getId().toString()))
-                            .body(res)
-                    );
-            });
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, livreurDTO.getId().toString())
+        );
     }
 
     /**
      * {@code GET  /livreurs} : get all the livreurs.
      *
      * @param pageable the pagination information.
-     * @param request a {@link ServerHttpRequest} request.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of livreurs in body.
      */
     @GetMapping("/livreurs")
-    public Mono<ResponseEntity<List<LivreurDTO>>> getAllLivreurs(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request
-    ) {
-        log.debug("REST request to get a page of Livreurs");
-        return livreurService
-            .countAll()
-            .zipWith(livreurService.findAll(pageable).collectList())
-            .map(countWithEntities ->
-                ResponseEntity
-                    .ok()
-                    .headers(
-                        PaginationUtil.generatePaginationHttpHeaders(
-                            UriComponentsBuilder.fromHttpRequest(request),
-                            new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
-                        )
-                    )
-                    .body(countWithEntities.getT2())
-            );
+    public ResponseEntity<List<LivreurDTO>> getAllLivreurs(LivreurCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Livreurs by criteria: {}", criteria);
+        Page<LivreurDTO> page = livreurQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /livreurs/count} : count all the livreurs.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/livreurs/count")
+    public ResponseEntity<Long> countLivreurs(LivreurCriteria criteria) {
+        log.debug("REST request to count Livreurs by criteria: {}", criteria);
+        return ResponseEntity.ok().body(livreurQueryService.countByCriteria(criteria));
     }
 
     /**
@@ -202,9 +175,9 @@ public class LivreurResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the livreurDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/livreurs/{id}")
-    public Mono<ResponseEntity<LivreurDTO>> getLivreur(@PathVariable Long id) {
+    public ResponseEntity<LivreurDTO> getLivreur(@PathVariable Long id) {
         log.debug("REST request to get Livreur : {}", id);
-        Mono<LivreurDTO> livreurDTO = livreurService.findOne(id);
+        Optional<LivreurDTO> livreurDTO = livreurService.findOne(id);
         return ResponseUtil.wrapOrNotFound(livreurDTO);
     }
 
@@ -215,16 +188,12 @@ public class LivreurResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/livreurs/{id}")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public Mono<ResponseEntity<Void>> deleteLivreur(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLivreur(@PathVariable Long id) {
         log.debug("REST request to delete Livreur : {}", id);
-        return livreurService
-            .delete(id)
-            .map(result ->
-                ResponseEntity
-                    .noContent()
-                    .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
-                    .build()
-            );
+        livreurService.delete(id);
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

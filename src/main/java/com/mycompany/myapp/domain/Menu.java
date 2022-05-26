@@ -2,32 +2,28 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import javax.persistence.*;
 
 /**
  * A Menu.
  */
-@Table("menu")
+@Entity
+@Table(name = "menu")
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column("id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column("nom_menu")
+    @Column(name = "nom_menu")
     private String nomMenu;
 
-    @Transient
+    @ManyToOne
     @JsonIgnoreProperties(value = { "responsableRestaurant" }, allowSetters = true)
     private Restaurant restaurant;
-
-    @Column("restaurant_id")
-    private Long restaurantId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -63,20 +59,11 @@ public class Menu implements Serializable {
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
-        this.restaurantId = restaurant != null ? restaurant.getId() : null;
     }
 
     public Menu restaurant(Restaurant restaurant) {
         this.setRestaurant(restaurant);
         return this;
-    }
-
-    public Long getRestaurantId() {
-        return this.restaurantId;
-    }
-
-    public void setRestaurantId(Long restaurant) {
-        this.restaurantId = restaurant;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

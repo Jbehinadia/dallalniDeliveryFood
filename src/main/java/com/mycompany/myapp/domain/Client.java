@@ -1,33 +1,32 @@
 package com.mycompany.myapp.domain;
 
 import java.io.Serializable;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import javax.persistence.*;
 
 /**
  * A Client.
  */
-@Table("client")
+@Entity
+@Table(name = "client")
 public class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column("id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column("nom_client")
+    @Column(name = "nom_client")
     private String nomClient;
 
-    @Column("prenom_client")
+    @Column(name = "prenom_client")
     private String prenomClient;
 
-    @Column("adresse_client")
+    @Column(name = "adresse_client")
     private String adresseClient;
 
-    @Column("num_client")
+    @Column(name = "num_client")
     private String numClient;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

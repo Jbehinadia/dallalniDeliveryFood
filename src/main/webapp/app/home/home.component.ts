@@ -20,7 +20,7 @@ import { CommandeService } from 'app/entities/commande/service/commande.service'
 import { IClient } from 'app/entities/client/client.model';
 import { ClientService } from 'app/entities/client/service/client.service';
 import Swals2 from 'sweetalert2';
-import dayjs from 'dayjs/esm';
+import * as dayjs from 'dayjs';
 import { CommandeDetailsService } from 'app/entities/commande-details/service/commande-details.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoginComponent } from 'app/login/login.component';

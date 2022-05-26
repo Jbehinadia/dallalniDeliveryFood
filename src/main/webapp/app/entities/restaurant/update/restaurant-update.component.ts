@@ -4,7 +4,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import dayjs from 'dayjs/esm';
+import * as dayjs from 'dayjs';
 
 import { IRestaurant } from '../restaurant.model';
 import { RestaurantService } from '../service/restaurant.service';

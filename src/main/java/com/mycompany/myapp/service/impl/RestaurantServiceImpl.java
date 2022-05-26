@@ -5,13 +5,13 @@ import com.mycompany.myapp.repository.RestaurantRepository;
 import com.mycompany.myapp.service.RestaurantService;
 import com.mycompany.myapp.service.dto.RestaurantDTO;
 import com.mycompany.myapp.service.mapper.RestaurantMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Service Implementation for managing {@link Restaurant}.
@@ -32,19 +32,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Mono<RestaurantDTO> save(RestaurantDTO restaurantDTO) {
+    public RestaurantDTO save(RestaurantDTO restaurantDTO) {
         log.debug("Request to save Restaurant : {}", restaurantDTO);
-        return restaurantRepository.save(restaurantMapper.toEntity(restaurantDTO)).map(restaurantMapper::toDto);
+        Restaurant restaurant = restaurantMapper.toEntity(restaurantDTO);
+        restaurant = restaurantRepository.save(restaurant);
+        return restaurantMapper.toDto(restaurant);
     }
 
     @Override
-    public Mono<RestaurantDTO> update(RestaurantDTO restaurantDTO) {
-        log.debug("Request to save Restaurant : {}", restaurantDTO);
-        return restaurantRepository.save(restaurantMapper.toEntity(restaurantDTO)).map(restaurantMapper::toDto);
-    }
-
-    @Override
-    public Mono<RestaurantDTO> partialUpdate(RestaurantDTO restaurantDTO) {
+    public Optional<RestaurantDTO> partialUpdate(RestaurantDTO restaurantDTO) {
         log.debug("Request to partially update Restaurant : {}", restaurantDTO);
 
         return restaurantRepository
@@ -54,35 +50,27 @@ public class RestaurantServiceImpl implements RestaurantService {
 
                 return existingRestaurant;
             })
-            .flatMap(restaurantRepository::save)
+            .map(restaurantRepository::save)
             .map(restaurantMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<RestaurantDTO> findAll(Pageable pageable) {
+    public Page<RestaurantDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Restaurants");
-        return restaurantRepository.findAllBy(pageable).map(restaurantMapper::toDto);
-    }
-
-    public Flux<RestaurantDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return restaurantRepository.findAllWithEagerRelationships(pageable).map(restaurantMapper::toDto);
-    }
-
-    public Mono<Long> countAll() {
-        return restaurantRepository.count();
+        return restaurantRepository.findAll(pageable).map(restaurantMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<RestaurantDTO> findOne(Long id) {
+    public Optional<RestaurantDTO> findOne(Long id) {
         log.debug("Request to get Restaurant : {}", id);
-        return restaurantRepository.findOneWithEagerRelationships(id).map(restaurantMapper::toDto);
+        return restaurantRepository.findById(id).map(restaurantMapper::toDto);
     }
 
     @Override
-    public Mono<Void> delete(Long id) {
+    public void delete(Long id) {
         log.debug("Request to delete Restaurant : {}", id);
-        return restaurantRepository.deleteById(id);
+        restaurantRepository.deleteById(id);
     }
 }

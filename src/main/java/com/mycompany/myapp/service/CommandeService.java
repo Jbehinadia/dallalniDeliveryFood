@@ -1,9 +1,9 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.service.dto.CommandeDTO;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Service Interface for managing {@link com.mycompany.myapp.domain.Commande}.
@@ -15,15 +15,7 @@ public interface CommandeService {
      * @param commandeDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<CommandeDTO> save(CommandeDTO commandeDTO);
-
-    /**
-     * Updates a commande.
-     *
-     * @param commandeDTO the entity to update.
-     * @return the persisted entity.
-     */
-    Mono<CommandeDTO> update(CommandeDTO commandeDTO);
+    CommandeDTO save(CommandeDTO commandeDTO);
 
     /**
      * Partially updates a commande.
@@ -31,7 +23,7 @@ public interface CommandeService {
      * @param commandeDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<CommandeDTO> partialUpdate(CommandeDTO commandeDTO);
+    Optional<CommandeDTO> partialUpdate(CommandeDTO commandeDTO);
 
     /**
      * Get all the commandes.
@@ -39,22 +31,7 @@ public interface CommandeService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<CommandeDTO> findAll(Pageable pageable);
-
-    /**
-     * Get all the commandes with eager load of many-to-many relationships.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Flux<CommandeDTO> findAllWithEagerRelationships(Pageable pageable);
-
-    /**
-     * Returns the number of commandes available.
-     * @return the number of entities in the database.
-     *
-     */
-    Mono<Long> countAll();
+    Page<CommandeDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" commande.
@@ -62,13 +39,12 @@ public interface CommandeService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<CommandeDTO> findOne(Long id);
+    Optional<CommandeDTO> findOne(Long id);
 
     /**
      * Delete the "id" commande.
      *
      * @param id the id of the entity.
-     * @return a Mono to signal the deletion
      */
-    Mono<Void> delete(Long id);
+    void delete(Long id);
 }

@@ -1,12 +1,13 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.repository.CommandeDetailsRepository;
+import com.mycompany.myapp.service.CommandeDetailsQueryService;
 import com.mycompany.myapp.service.CommandeDetailsService;
+import com.mycompany.myapp.service.criteria.CommandeDetailsCriteria;
 import com.mycompany.myapp.service.dto.CommandeDetailsDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,21 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
-import tech.jhipster.web.util.reactive.ResponseUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.mycompany.myapp.domain.CommandeDetails}.
@@ -48,9 +43,16 @@ public class CommandeDetailsResource {
 
     private final CommandeDetailsRepository commandeDetailsRepository;
 
-    public CommandeDetailsResource(CommandeDetailsService commandeDetailsService, CommandeDetailsRepository commandeDetailsRepository) {
+    private final CommandeDetailsQueryService commandeDetailsQueryService;
+
+    public CommandeDetailsResource(
+        CommandeDetailsService commandeDetailsService,
+        CommandeDetailsRepository commandeDetailsRepository,
+        CommandeDetailsQueryService commandeDetailsQueryService
+    ) {
         this.commandeDetailsService = commandeDetailsService;
         this.commandeDetailsRepository = commandeDetailsRepository;
+        this.commandeDetailsQueryService = commandeDetailsQueryService;
     }
 
     /**
@@ -61,24 +63,17 @@ public class CommandeDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/commande-details")
-    public Mono<ResponseEntity<CommandeDetailsDTO>> createCommandeDetails(@RequestBody CommandeDetailsDTO commandeDetailsDTO)
+    public ResponseEntity<CommandeDetailsDTO> createCommandeDetails(@RequestBody CommandeDetailsDTO commandeDetailsDTO)
         throws URISyntaxException {
         log.debug("REST request to save CommandeDetails : {}", commandeDetailsDTO);
         if (commandeDetailsDTO.getId() != null) {
             throw new BadRequestAlertException("A new commandeDetails cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        return commandeDetailsService
-            .save(commandeDetailsDTO)
-            .map(result -> {
-                try {
-                    return ResponseEntity
-                        .created(new URI("/api/commande-details/" + result.getId()))
-                        .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-                        .body(result);
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+        CommandeDetailsDTO result = commandeDetailsService.save(commandeDetailsDTO);
+        return ResponseEntity
+            .created(new URI("/api/commande-details/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -92,7 +87,7 @@ public class CommandeDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/commande-details/{id}")
-    public Mono<ResponseEntity<CommandeDetailsDTO>> updateCommandeDetails(
+    public ResponseEntity<CommandeDetailsDTO> updateCommandeDetails(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody CommandeDetailsDTO commandeDetailsDTO
     ) throws URISyntaxException {
@@ -104,23 +99,15 @@ public class CommandeDetailsResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        return commandeDetailsRepository
-            .existsById(id)
-            .flatMap(exists -> {
-                if (!exists) {
-                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
-                }
+        if (!commandeDetailsRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
 
-                return commandeDetailsService
-                    .update(commandeDetailsDTO)
-                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
-                    .map(result ->
-                        ResponseEntity
-                            .ok()
-                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-                            .body(result)
-                    );
-            });
+        CommandeDetailsDTO result = commandeDetailsService.save(commandeDetailsDTO);
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, commandeDetailsDTO.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -135,7 +122,7 @@ public class CommandeDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/commande-details/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<CommandeDetailsDTO>> partialUpdateCommandeDetails(
+    public ResponseEntity<CommandeDetailsDTO> partialUpdateCommandeDetails(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody CommandeDetailsDTO commandeDetailsDTO
     ) throws URISyntaxException {
@@ -147,55 +134,43 @@ public class CommandeDetailsResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        return commandeDetailsRepository
-            .existsById(id)
-            .flatMap(exists -> {
-                if (!exists) {
-                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
-                }
+        if (!commandeDetailsRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
 
-                Mono<CommandeDetailsDTO> result = commandeDetailsService.partialUpdate(commandeDetailsDTO);
+        Optional<CommandeDetailsDTO> result = commandeDetailsService.partialUpdate(commandeDetailsDTO);
 
-                return result
-                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
-                    .map(res ->
-                        ResponseEntity
-                            .ok()
-                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, res.getId().toString()))
-                            .body(res)
-                    );
-            });
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, commandeDetailsDTO.getId().toString())
+        );
     }
 
     /**
      * {@code GET  /commande-details} : get all the commandeDetails.
      *
      * @param pageable the pagination information.
-     * @param request a {@link ServerHttpRequest} request.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of commandeDetails in body.
      */
     @GetMapping("/commande-details")
-    public Mono<ResponseEntity<List<CommandeDetailsDTO>>> getAllCommandeDetails(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request,
-        @RequestParam(required = false, defaultValue = "true") boolean eagerload
-    ) {
-        log.debug("REST request to get a page of CommandeDetails");
-        return commandeDetailsService
-            .countAll()
-            .zipWith(commandeDetailsService.findAll(pageable).collectList())
-            .map(countWithEntities ->
-                ResponseEntity
-                    .ok()
-                    .headers(
-                        PaginationUtil.generatePaginationHttpHeaders(
-                            UriComponentsBuilder.fromHttpRequest(request),
-                            new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
-                        )
-                    )
-                    .body(countWithEntities.getT2())
-            );
+    public ResponseEntity<List<CommandeDetailsDTO>> getAllCommandeDetails(CommandeDetailsCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get CommandeDetails by criteria: {}", criteria);
+        Page<CommandeDetailsDTO> page = commandeDetailsQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /commande-details/count} : count all the commandeDetails.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/commande-details/count")
+    public ResponseEntity<Long> countCommandeDetails(CommandeDetailsCriteria criteria) {
+        log.debug("REST request to count CommandeDetails by criteria: {}", criteria);
+        return ResponseEntity.ok().body(commandeDetailsQueryService.countByCriteria(criteria));
     }
 
     /**
@@ -205,9 +180,9 @@ public class CommandeDetailsResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the commandeDetailsDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/commande-details/{id}")
-    public Mono<ResponseEntity<CommandeDetailsDTO>> getCommandeDetails(@PathVariable Long id) {
+    public ResponseEntity<CommandeDetailsDTO> getCommandeDetails(@PathVariable Long id) {
         log.debug("REST request to get CommandeDetails : {}", id);
-        Mono<CommandeDetailsDTO> commandeDetailsDTO = commandeDetailsService.findOne(id);
+        Optional<CommandeDetailsDTO> commandeDetailsDTO = commandeDetailsService.findOne(id);
         return ResponseUtil.wrapOrNotFound(commandeDetailsDTO);
     }
 
@@ -218,16 +193,12 @@ public class CommandeDetailsResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/commande-details/{id}")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public Mono<ResponseEntity<Void>> deleteCommandeDetails(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCommandeDetails(@PathVariable Long id) {
         log.debug("REST request to delete CommandeDetails : {}", id);
-        return commandeDetailsService
-            .delete(id)
-            .map(result ->
-                ResponseEntity
-                    .noContent()
-                    .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
-                    .build()
-            );
+        commandeDetailsService.delete(id);
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

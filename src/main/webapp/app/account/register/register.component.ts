@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { EMAIL_ALREADY_USED_TYPE, LOGIN_ALREADY_USED_TYPE } from 'app/config/error.constants';
 import { RegisterService } from './register.service';
 import { Restaurant } from 'app/entities/restaurant/restaurant.model';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Client, IClient } from 'app/entities/client/client.model';
 import { RestaurantService } from 'app/entities/restaurant/service/restaurant.service';
 import { ResponsableRestaurantService } from 'app/entities/responsable-restaurant/service/responsable-restaurant.service';
@@ -14,8 +14,9 @@ import { LivreurService } from 'app/entities/livreur/service/livreur.service';
 import { IResponsableRestaurant, ResponsableRestaurant } from 'app/entities/responsable-restaurant/responsable-restaurant.model';
 import { ILivreur, Livreur } from 'app/entities/livreur/livreur.model';
 import { IUser, User } from 'app/admin/user-management/user-management.model';
-import dayjs from 'dayjs/esm';
+import * as dayjs from 'dayjs';
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'jhi-register',

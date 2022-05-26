@@ -5,13 +5,13 @@ import com.mycompany.myapp.repository.ResponsableRestaurantRepository;
 import com.mycompany.myapp.service.ResponsableRestaurantService;
 import com.mycompany.myapp.service.dto.ResponsableRestaurantDTO;
 import com.mycompany.myapp.service.mapper.ResponsableRestaurantMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Service Implementation for managing {@link ResponsableRestaurant}.
@@ -35,23 +35,15 @@ public class ResponsableRestaurantServiceImpl implements ResponsableRestaurantSe
     }
 
     @Override
-    public Mono<ResponsableRestaurantDTO> save(ResponsableRestaurantDTO responsableRestaurantDTO) {
+    public ResponsableRestaurantDTO save(ResponsableRestaurantDTO responsableRestaurantDTO) {
         log.debug("Request to save ResponsableRestaurant : {}", responsableRestaurantDTO);
-        return responsableRestaurantRepository
-            .save(responsableRestaurantMapper.toEntity(responsableRestaurantDTO))
-            .map(responsableRestaurantMapper::toDto);
+        ResponsableRestaurant responsableRestaurant = responsableRestaurantMapper.toEntity(responsableRestaurantDTO);
+        responsableRestaurant = responsableRestaurantRepository.save(responsableRestaurant);
+        return responsableRestaurantMapper.toDto(responsableRestaurant);
     }
 
     @Override
-    public Mono<ResponsableRestaurantDTO> update(ResponsableRestaurantDTO responsableRestaurantDTO) {
-        log.debug("Request to save ResponsableRestaurant : {}", responsableRestaurantDTO);
-        return responsableRestaurantRepository
-            .save(responsableRestaurantMapper.toEntity(responsableRestaurantDTO))
-            .map(responsableRestaurantMapper::toDto);
-    }
-
-    @Override
-    public Mono<ResponsableRestaurantDTO> partialUpdate(ResponsableRestaurantDTO responsableRestaurantDTO) {
+    public Optional<ResponsableRestaurantDTO> partialUpdate(ResponsableRestaurantDTO responsableRestaurantDTO) {
         log.debug("Request to partially update ResponsableRestaurant : {}", responsableRestaurantDTO);
 
         return responsableRestaurantRepository
@@ -61,31 +53,27 @@ public class ResponsableRestaurantServiceImpl implements ResponsableRestaurantSe
 
                 return existingResponsableRestaurant;
             })
-            .flatMap(responsableRestaurantRepository::save)
+            .map(responsableRestaurantRepository::save)
             .map(responsableRestaurantMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<ResponsableRestaurantDTO> findAll(Pageable pageable) {
+    public Page<ResponsableRestaurantDTO> findAll(Pageable pageable) {
         log.debug("Request to get all ResponsableRestaurants");
-        return responsableRestaurantRepository.findAllBy(pageable).map(responsableRestaurantMapper::toDto);
-    }
-
-    public Mono<Long> countAll() {
-        return responsableRestaurantRepository.count();
+        return responsableRestaurantRepository.findAll(pageable).map(responsableRestaurantMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<ResponsableRestaurantDTO> findOne(Long id) {
+    public Optional<ResponsableRestaurantDTO> findOne(Long id) {
         log.debug("Request to get ResponsableRestaurant : {}", id);
         return responsableRestaurantRepository.findById(id).map(responsableRestaurantMapper::toDto);
     }
 
     @Override
-    public Mono<Void> delete(Long id) {
+    public void delete(Long id) {
         log.debug("Request to delete ResponsableRestaurant : {}", id);
-        return responsableRestaurantRepository.deleteById(id);
+        responsableRestaurantRepository.deleteById(id);
     }
 }

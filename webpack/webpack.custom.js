@@ -11,6 +11,22 @@ const environment = require('./environment');
 const proxyConfig = require('./proxy.conf');
 
 module.exports = async (config, options, targetOptions) => {
+  config.cache = {
+    // 1. Set cache type to filesystem
+    type: 'filesystem',
+    cacheDirectory: path.resolve(__dirname, '../target/webpack'),
+    buildDependencies: {
+      // 2. Add your config as buildDependency to get cache invalidation on config change
+      config: [
+        __filename,
+        path.resolve(__dirname, 'webpack.custom.js'),
+        path.resolve(__dirname, '../angular.json'),
+        path.resolve(__dirname, '../tsconfig.app.json'),
+        path.resolve(__dirname, '../tsconfig.json'),
+      ],
+    },
+  };
+
   // PLUGINS
   if (config.mode === 'development') {
     config.plugins.push(
@@ -39,7 +55,6 @@ module.exports = async (config, options, targetOptions) => {
           https: tls,
           proxy: {
             target: `http${tls ? 's' : ''}://localhost:${targetOptions.target === 'serve' ? '4200' : '8080'}`,
-            ws: true,
             proxyOptions: {
               changeOrigin: false, //pass the Host header to the backend unchanged  https://github.com/Browsersync/browser-sync/issues/430
             },
@@ -77,18 +92,6 @@ module.exports = async (config, options, targetOptions) => {
   }
 
   const patterns = [
-    {
-      // https://github.com/swagger-api/swagger-ui/blob/v4.6.1/swagger-ui-dist-package/README.md
-      context: require('swagger-ui-dist').getAbsoluteFSPath(),
-      from: '*.{js,css,html,png}',
-      to: 'swagger-ui/',
-      globOptions: { ignore: ['**/index.html'] },
-    },
-    {
-      from: require.resolve('axios/dist/axios.min.js'),
-      to: 'swagger-ui/',
-    },
-    { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui/' },
     // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
   ];
 

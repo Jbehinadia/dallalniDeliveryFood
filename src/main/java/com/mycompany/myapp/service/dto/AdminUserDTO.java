@@ -211,10 +211,10 @@ public class AdminUserDTO {
         return "AdminUserDTO{" +
             "login='" + login + '\'' +
             ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
             ", responsable='" + responsable + '\'' +
             ", livreur='" + livreur + '\'' +
             ", client='" + client + '\'' +
-            ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +

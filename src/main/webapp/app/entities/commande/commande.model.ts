@@ -1,4 +1,4 @@
-import dayjs from 'dayjs/esm';
+import * as dayjs from 'dayjs';
 import { ICommandeDetails } from 'app/entities/commande-details/commande-details.model';
 import { ILivreur } from 'app/entities/livreur/livreur.model';
 import { IClient } from 'app/entities/client/client.model';
