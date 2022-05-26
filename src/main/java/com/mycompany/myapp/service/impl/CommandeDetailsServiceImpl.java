@@ -5,13 +5,13 @@ import com.mycompany.myapp.repository.CommandeDetailsRepository;
 import com.mycompany.myapp.service.CommandeDetailsService;
 import com.mycompany.myapp.service.dto.CommandeDetailsDTO;
 import com.mycompany.myapp.service.mapper.CommandeDetailsMapper;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Service Implementation for managing {@link CommandeDetails}.
@@ -32,15 +32,19 @@ public class CommandeDetailsServiceImpl implements CommandeDetailsService {
     }
 
     @Override
-    public CommandeDetailsDTO save(CommandeDetailsDTO commandeDetailsDTO) {
+    public Mono<CommandeDetailsDTO> save(CommandeDetailsDTO commandeDetailsDTO) {
         log.debug("Request to save CommandeDetails : {}", commandeDetailsDTO);
-        CommandeDetails commandeDetails = commandeDetailsMapper.toEntity(commandeDetailsDTO);
-        commandeDetails = commandeDetailsRepository.save(commandeDetails);
-        return commandeDetailsMapper.toDto(commandeDetails);
+        return commandeDetailsRepository.save(commandeDetailsMapper.toEntity(commandeDetailsDTO)).map(commandeDetailsMapper::toDto);
     }
 
     @Override
-    public Optional<CommandeDetailsDTO> partialUpdate(CommandeDetailsDTO commandeDetailsDTO) {
+    public Mono<CommandeDetailsDTO> update(CommandeDetailsDTO commandeDetailsDTO) {
+        log.debug("Request to save CommandeDetails : {}", commandeDetailsDTO);
+        return commandeDetailsRepository.save(commandeDetailsMapper.toEntity(commandeDetailsDTO)).map(commandeDetailsMapper::toDto);
+    }
+
+    @Override
+    public Mono<CommandeDetailsDTO> partialUpdate(CommandeDetailsDTO commandeDetailsDTO) {
         log.debug("Request to partially update CommandeDetails : {}", commandeDetailsDTO);
 
         return commandeDetailsRepository
@@ -50,27 +54,35 @@ public class CommandeDetailsServiceImpl implements CommandeDetailsService {
 
                 return existingCommandeDetails;
             })
-            .map(commandeDetailsRepository::save)
+            .flatMap(commandeDetailsRepository::save)
             .map(commandeDetailsMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CommandeDetailsDTO> findAll(Pageable pageable) {
+    public Flux<CommandeDetailsDTO> findAll(Pageable pageable) {
         log.debug("Request to get all CommandeDetails");
-        return commandeDetailsRepository.findAll(pageable).map(commandeDetailsMapper::toDto);
+        return commandeDetailsRepository.findAllBy(pageable).map(commandeDetailsMapper::toDto);
+    }
+
+    public Flux<CommandeDetailsDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return commandeDetailsRepository.findAllWithEagerRelationships(pageable).map(commandeDetailsMapper::toDto);
+    }
+
+    public Mono<Long> countAll() {
+        return commandeDetailsRepository.count();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CommandeDetailsDTO> findOne(Long id) {
+    public Mono<CommandeDetailsDTO> findOne(Long id) {
         log.debug("Request to get CommandeDetails : {}", id);
-        return commandeDetailsRepository.findById(id).map(commandeDetailsMapper::toDto);
+        return commandeDetailsRepository.findOneWithEagerRelationships(id).map(commandeDetailsMapper::toDto);
     }
 
     @Override
-    public void delete(Long id) {
+    public Mono<Void> delete(Long id) {
         log.debug("Request to delete CommandeDetails : {}", id);
-        commandeDetailsRepository.deleteById(id);
+        return commandeDetailsRepository.deleteById(id);
     }
 }

@@ -9,8 +9,8 @@
     <changeSet id="20220516214139-2" author="jhipster">
 
         <addForeignKeyConstraint baseColumnNames="restaurant_id"
-                                 baseTableName="responsableRestaurant"
-                                 constraintName="fk_responsableRestaurant__restaurant_id"
+                                 baseTableName="responsable_restaurant"
+                                 constraintName="fk_responsable_restaurant__restaurant_id"
                                  referencedColumnNames="id"
                                  referencedTableName="restaurant"/>
     </changeSet>

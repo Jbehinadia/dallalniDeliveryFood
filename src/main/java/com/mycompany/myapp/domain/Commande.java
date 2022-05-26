@@ -2,51 +2,58 @@ package com.mycompany.myapp.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * A Commande.
  */
-@Entity
-@Table(name = "commande")
+@Table("commande")
 public class Commande implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column("id")
     private Long id;
 
-    @Column(name = "adresse_commande")
+    @Column("adresse_commande")
     private String adresseCommande;
 
-    @Column(name = "etat")
+    @Column("etat")
     private String etat;
 
-    @Column(name = "date_commande")
+    @Column("date_commande")
     private Instant dateCommande;
 
-    @Column(name = "prix_total")
+    @Column("prix_total")
     private Double prixTotal;
 
-    @Column(name = "remise_perc")
+    @Column("remise_perc")
     private Double remisePerc;
 
-    @Column(name = "remice_val")
+    @Column("remice_val")
     private Double remiceVal;
 
-    @Column(name = "prix_livreson")
+    @Column("prix_livreson")
     private Double prixLivreson;
 
-    @Column(name = "date_sortie")
+    @Column("date_sortie")
     private Instant dateSortie;
 
-    @ManyToOne
+    @Transient
     private Livreur livreur;
 
-    @ManyToOne
+    @Transient
     private Client client;
+
+    @Column("livreur_id")
+    private Long livreurId;
+
+    @Column("client_id")
+    private Long clientId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -173,6 +180,7 @@ public class Commande implements Serializable {
 
     public void setLivreur(Livreur livreur) {
         this.livreur = livreur;
+        this.livreurId = livreur != null ? livreur.getId() : null;
     }
 
     public Commande livreur(Livreur livreur) {
@@ -186,11 +194,28 @@ public class Commande implements Serializable {
 
     public void setClient(Client client) {
         this.client = client;
+        this.clientId = client != null ? client.getId() : null;
     }
 
     public Commande client(Client client) {
         this.setClient(client);
         return this;
+    }
+
+    public Long getLivreurId() {
+        return this.livreurId;
+    }
+
+    public void setLivreurId(Long livreur) {
+        this.livreurId = livreur;
+    }
+
+    public Long getClientId() {
+        return this.clientId;
+    }
+
+    public void setClientId(Long client) {
+        this.clientId = client;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

@@ -5,13 +5,13 @@ import com.mycompany.myapp.repository.ClientRepository;
 import com.mycompany.myapp.service.ClientService;
 import com.mycompany.myapp.service.dto.ClientDTO;
 import com.mycompany.myapp.service.mapper.ClientMapper;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Service Implementation for managing {@link Client}.
@@ -32,15 +32,19 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientDTO save(ClientDTO clientDTO) {
+    public Mono<ClientDTO> save(ClientDTO clientDTO) {
         log.debug("Request to save Client : {}", clientDTO);
-        Client client = clientMapper.toEntity(clientDTO);
-        client = clientRepository.save(client);
-        return clientMapper.toDto(client);
+        return clientRepository.save(clientMapper.toEntity(clientDTO)).map(clientMapper::toDto);
     }
 
     @Override
-    public Optional<ClientDTO> partialUpdate(ClientDTO clientDTO) {
+    public Mono<ClientDTO> update(ClientDTO clientDTO) {
+        log.debug("Request to save Client : {}", clientDTO);
+        return clientRepository.save(clientMapper.toEntity(clientDTO)).map(clientMapper::toDto);
+    }
+
+    @Override
+    public Mono<ClientDTO> partialUpdate(ClientDTO clientDTO) {
         log.debug("Request to partially update Client : {}", clientDTO);
 
         return clientRepository
@@ -50,27 +54,31 @@ public class ClientServiceImpl implements ClientService {
 
                 return existingClient;
             })
-            .map(clientRepository::save)
+            .flatMap(clientRepository::save)
             .map(clientMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ClientDTO> findAll(Pageable pageable) {
+    public Flux<ClientDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Clients");
-        return clientRepository.findAll(pageable).map(clientMapper::toDto);
+        return clientRepository.findAllBy(pageable).map(clientMapper::toDto);
+    }
+
+    public Mono<Long> countAll() {
+        return clientRepository.count();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ClientDTO> findOne(Long id) {
+    public Mono<ClientDTO> findOne(Long id) {
         log.debug("Request to get Client : {}", id);
         return clientRepository.findById(id).map(clientMapper::toDto);
     }
 
     @Override
-    public void delete(Long id) {
+    public Mono<Void> delete(Long id) {
         log.debug("Request to delete Client : {}", id);
-        clientRepository.deleteById(id);
+        return clientRepository.deleteById(id);
     }
 }

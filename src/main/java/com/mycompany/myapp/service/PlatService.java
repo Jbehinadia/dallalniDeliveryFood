@@ -1,9 +1,9 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.service.dto.PlatDTO;
-import java.util.Optional;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Service Interface for managing {@link com.mycompany.myapp.domain.Plat}.
@@ -15,7 +15,15 @@ public interface PlatService {
      * @param platDTO the entity to save.
      * @return the persisted entity.
      */
-    PlatDTO save(PlatDTO platDTO);
+    Mono<PlatDTO> save(PlatDTO platDTO);
+
+    /**
+     * Updates a plat.
+     *
+     * @param platDTO the entity to update.
+     * @return the persisted entity.
+     */
+    Mono<PlatDTO> update(PlatDTO platDTO);
 
     /**
      * Partially updates a plat.
@@ -23,7 +31,7 @@ public interface PlatService {
      * @param platDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<PlatDTO> partialUpdate(PlatDTO platDTO);
+    Mono<PlatDTO> partialUpdate(PlatDTO platDTO);
 
     /**
      * Get all the plats.
@@ -31,7 +39,22 @@ public interface PlatService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<PlatDTO> findAll(Pageable pageable);
+    Flux<PlatDTO> findAll(Pageable pageable);
+
+    /**
+     * Get all the plats with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Flux<PlatDTO> findAllWithEagerRelationships(Pageable pageable);
+
+    /**
+     * Returns the number of plats available.
+     * @return the number of entities in the database.
+     *
+     */
+    Mono<Long> countAll();
 
     /**
      * Get the "id" plat.
@@ -39,12 +62,13 @@ public interface PlatService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<PlatDTO> findOne(Long id);
+    Mono<PlatDTO> findOne(Long id);
 
     /**
      * Delete the "id" plat.
      *
      * @param id the id of the entity.
+     * @return a Mono to signal the deletion
      */
-    void delete(Long id);
+    Mono<Void> delete(Long id);
 }

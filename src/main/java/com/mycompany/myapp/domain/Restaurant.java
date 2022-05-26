@@ -2,39 +2,43 @@ package com.mycompany.myapp.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * A Restaurant.
  */
-@Entity
-@Table(name = "restaurant")
+@Table("restaurant")
 public class Restaurant implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column("id")
     private Long id;
 
-    @Column(name = "nom_restaurant")
+    @Column("nom_restaurant")
     private String nomRestaurant;
 
-    @Column(name = "adresse_restaurant")
+    @Column("adresse_restaurant")
     private String adresseRestaurant;
 
-    @Column(name = "num_restaurant")
+    @Column("num_restaurant")
     private String numRestaurant;
 
-    @Column(name = "date_ouverture")
+    @Column("date_ouverture")
     private Instant dateOuverture;
 
-    @Column(name = "date_fermiture")
+    @Column("date_fermiture")
     private Instant dateFermiture;
 
-    @ManyToOne
+    @Transient
     private ResponsableRestaurant responsableRestaurant;
+
+    @Column("responsable_restaurant_id")
+    private Long responsableRestaurantId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -122,11 +126,20 @@ public class Restaurant implements Serializable {
 
     public void setResponsableRestaurant(ResponsableRestaurant ResponsableRestaurant) {
         this.responsableRestaurant = ResponsableRestaurant;
+        this.responsableRestaurantId = ResponsableRestaurant != null ? ResponsableRestaurant.getId() : null;
     }
 
     public Restaurant responsableRestaurant(ResponsableRestaurant ResponsableRestaurant) {
         this.setResponsableRestaurant(ResponsableRestaurant);
         return this;
+    }
+
+    public Long getResponsableRestaurantId() {
+        return this.responsableRestaurantId;
+    }
+
+    public void setResponsableRestaurantId(Long ResponsableRestaurant) {
+        this.responsableRestaurantId = ResponsableRestaurant;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

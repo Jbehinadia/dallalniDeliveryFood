@@ -1,9 +1,9 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.service.dto.RestaurantDTO;
-import java.util.Optional;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Service Interface for managing {@link com.mycompany.myapp.domain.Restaurant}.
@@ -15,7 +15,15 @@ public interface RestaurantService {
      * @param restaurantDTO the entity to save.
      * @return the persisted entity.
      */
-    RestaurantDTO save(RestaurantDTO restaurantDTO);
+    Mono<RestaurantDTO> save(RestaurantDTO restaurantDTO);
+
+    /**
+     * Updates a restaurant.
+     *
+     * @param restaurantDTO the entity to update.
+     * @return the persisted entity.
+     */
+    Mono<RestaurantDTO> update(RestaurantDTO restaurantDTO);
 
     /**
      * Partially updates a restaurant.
@@ -23,7 +31,7 @@ public interface RestaurantService {
      * @param restaurantDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<RestaurantDTO> partialUpdate(RestaurantDTO restaurantDTO);
+    Mono<RestaurantDTO> partialUpdate(RestaurantDTO restaurantDTO);
 
     /**
      * Get all the restaurants.
@@ -31,7 +39,22 @@ public interface RestaurantService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<RestaurantDTO> findAll(Pageable pageable);
+    Flux<RestaurantDTO> findAll(Pageable pageable);
+
+    /**
+     * Get all the restaurants with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Flux<RestaurantDTO> findAllWithEagerRelationships(Pageable pageable);
+
+    /**
+     * Returns the number of restaurants available.
+     * @return the number of entities in the database.
+     *
+     */
+    Mono<Long> countAll();
 
     /**
      * Get the "id" restaurant.
@@ -39,12 +62,13 @@ public interface RestaurantService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<RestaurantDTO> findOne(Long id);
+    Mono<RestaurantDTO> findOne(Long id);
 
     /**
      * Delete the "id" restaurant.
      *
      * @param id the id of the entity.
+     * @return a Mono to signal the deletion
      */
-    void delete(Long id);
+    Mono<Void> delete(Long id);
 }

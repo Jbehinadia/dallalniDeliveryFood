@@ -5,13 +5,13 @@ import com.mycompany.myapp.repository.CommandeRepository;
 import com.mycompany.myapp.service.CommandeService;
 import com.mycompany.myapp.service.dto.CommandeDTO;
 import com.mycompany.myapp.service.mapper.CommandeMapper;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Service Implementation for managing {@link Commande}.
@@ -32,15 +32,19 @@ public class CommandeServiceImpl implements CommandeService {
     }
 
     @Override
-    public CommandeDTO save(CommandeDTO commandeDTO) {
+    public Mono<CommandeDTO> save(CommandeDTO commandeDTO) {
         log.debug("Request to save Commande : {}", commandeDTO);
-        Commande commande = commandeMapper.toEntity(commandeDTO);
-        commande = commandeRepository.save(commande);
-        return commandeMapper.toDto(commande);
+        return commandeRepository.save(commandeMapper.toEntity(commandeDTO)).map(commandeMapper::toDto);
     }
 
     @Override
-    public Optional<CommandeDTO> partialUpdate(CommandeDTO commandeDTO) {
+    public Mono<CommandeDTO> update(CommandeDTO commandeDTO) {
+        log.debug("Request to save Commande : {}", commandeDTO);
+        return commandeRepository.save(commandeMapper.toEntity(commandeDTO)).map(commandeMapper::toDto);
+    }
+
+    @Override
+    public Mono<CommandeDTO> partialUpdate(CommandeDTO commandeDTO) {
         log.debug("Request to partially update Commande : {}", commandeDTO);
 
         return commandeRepository
@@ -50,27 +54,35 @@ public class CommandeServiceImpl implements CommandeService {
 
                 return existingCommande;
             })
-            .map(commandeRepository::save)
+            .flatMap(commandeRepository::save)
             .map(commandeMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CommandeDTO> findAll(Pageable pageable) {
+    public Flux<CommandeDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Commandes");
-        return commandeRepository.findAll(pageable).map(commandeMapper::toDto);
+        return commandeRepository.findAllBy(pageable).map(commandeMapper::toDto);
+    }
+
+    public Flux<CommandeDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return commandeRepository.findAllWithEagerRelationships(pageable).map(commandeMapper::toDto);
+    }
+
+    public Mono<Long> countAll() {
+        return commandeRepository.count();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CommandeDTO> findOne(Long id) {
+    public Mono<CommandeDTO> findOne(Long id) {
         log.debug("Request to get Commande : {}", id);
-        return commandeRepository.findById(id).map(commandeMapper::toDto);
+        return commandeRepository.findOneWithEagerRelationships(id).map(commandeMapper::toDto);
     }
 
     @Override
-    public void delete(Long id) {
+    public Mono<Void> delete(Long id) {
         log.debug("Request to delete Commande : {}", id);
-        commandeRepository.deleteById(id);
+        return commandeRepository.deleteById(id);
     }
 }

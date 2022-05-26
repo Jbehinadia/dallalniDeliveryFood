@@ -1,9 +1,9 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.service.dto.LivreurDTO;
-import java.util.Optional;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Service Interface for managing {@link com.mycompany.myapp.domain.Livreur}.
@@ -15,7 +15,15 @@ public interface LivreurService {
      * @param livreurDTO the entity to save.
      * @return the persisted entity.
      */
-    LivreurDTO save(LivreurDTO livreurDTO);
+    Mono<LivreurDTO> save(LivreurDTO livreurDTO);
+
+    /**
+     * Updates a livreur.
+     *
+     * @param livreurDTO the entity to update.
+     * @return the persisted entity.
+     */
+    Mono<LivreurDTO> update(LivreurDTO livreurDTO);
 
     /**
      * Partially updates a livreur.
@@ -23,7 +31,7 @@ public interface LivreurService {
      * @param livreurDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<LivreurDTO> partialUpdate(LivreurDTO livreurDTO);
+    Mono<LivreurDTO> partialUpdate(LivreurDTO livreurDTO);
 
     /**
      * Get all the livreurs.
@@ -31,7 +39,14 @@ public interface LivreurService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<LivreurDTO> findAll(Pageable pageable);
+    Flux<LivreurDTO> findAll(Pageable pageable);
+
+    /**
+     * Returns the number of livreurs available.
+     * @return the number of entities in the database.
+     *
+     */
+    Mono<Long> countAll();
 
     /**
      * Get the "id" livreur.
@@ -39,12 +54,13 @@ public interface LivreurService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<LivreurDTO> findOne(Long id);
+    Mono<LivreurDTO> findOne(Long id);
 
     /**
      * Delete the "id" livreur.
      *
      * @param id the id of the entity.
+     * @return a Mono to signal the deletion
      */
-    void delete(Long id);
+    Mono<Void> delete(Long id);
 }

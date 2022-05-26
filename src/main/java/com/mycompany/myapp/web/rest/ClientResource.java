@@ -1,13 +1,12 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.repository.ClientRepository;
-import com.mycompany.myapp.service.ClientQueryService;
 import com.mycompany.myapp.service.ClientService;
-import com.mycompany.myapp.service.criteria.ClientCriteria;
 import com.mycompany.myapp.service.dto.ClientDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,15 +14,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
-import tech.jhipster.web.util.ResponseUtil;
+import tech.jhipster.web.util.reactive.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.mycompany.myapp.domain.Client}.
@@ -43,12 +48,9 @@ public class ClientResource {
 
     private final ClientRepository clientRepository;
 
-    private final ClientQueryService clientQueryService;
-
-    public ClientResource(ClientService clientService, ClientRepository clientRepository, ClientQueryService clientQueryService) {
+    public ClientResource(ClientService clientService, ClientRepository clientRepository) {
         this.clientService = clientService;
         this.clientRepository = clientRepository;
-        this.clientQueryService = clientQueryService;
     }
 
     /**
@@ -59,16 +61,23 @@ public class ClientResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/clients")
-    public ResponseEntity<ClientDTO> createClient(@RequestBody ClientDTO clientDTO) throws URISyntaxException {
+    public Mono<ResponseEntity<ClientDTO>> createClient(@RequestBody ClientDTO clientDTO) throws URISyntaxException {
         log.debug("REST request to save Client : {}", clientDTO);
         if (clientDTO.getId() != null) {
             throw new BadRequestAlertException("A new client cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ClientDTO result = clientService.save(clientDTO);
-        return ResponseEntity
-            .created(new URI("/api/clients/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        return clientService
+            .save(clientDTO)
+            .map(result -> {
+                try {
+                    return ResponseEntity
+                        .created(new URI("/api/clients/" + result.getId()))
+                        .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                        .body(result);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            });
     }
 
     /**
@@ -82,7 +91,7 @@ public class ClientResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/clients/{id}")
-    public ResponseEntity<ClientDTO> updateClient(
+    public Mono<ResponseEntity<ClientDTO>> updateClient(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody ClientDTO clientDTO
     ) throws URISyntaxException {
@@ -94,15 +103,23 @@ public class ClientResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!clientRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
+        return clientRepository
+            .existsById(id)
+            .flatMap(exists -> {
+                if (!exists) {
+                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+                }
 
-        ClientDTO result = clientService.save(clientDTO);
-        return ResponseEntity
-            .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, clientDTO.getId().toString()))
-            .body(result);
+                return clientService
+                    .update(clientDTO)
+                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                    .map(result ->
+                        ResponseEntity
+                            .ok()
+                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                            .body(result)
+                    );
+            });
     }
 
     /**
@@ -117,7 +134,7 @@ public class ClientResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/clients/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<ClientDTO> partialUpdateClient(
+    public Mono<ResponseEntity<ClientDTO>> partialUpdateClient(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody ClientDTO clientDTO
     ) throws URISyntaxException {
@@ -129,43 +146,53 @@ public class ClientResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!clientRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
+        return clientRepository
+            .existsById(id)
+            .flatMap(exists -> {
+                if (!exists) {
+                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+                }
 
-        Optional<ClientDTO> result = clientService.partialUpdate(clientDTO);
+                Mono<ClientDTO> result = clientService.partialUpdate(clientDTO);
 
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, clientDTO.getId().toString())
-        );
+                return result
+                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                    .map(res ->
+                        ResponseEntity
+                            .ok()
+                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, res.getId().toString()))
+                            .body(res)
+                    );
+            });
     }
 
     /**
      * {@code GET  /clients} : get all the clients.
      *
      * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
+     * @param request a {@link ServerHttpRequest} request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of clients in body.
      */
     @GetMapping("/clients")
-    public ResponseEntity<List<ClientDTO>> getAllClients(ClientCriteria criteria, Pageable pageable) {
-        log.debug("REST request to get Clients by criteria: {}", criteria);
-        Page<ClientDTO> page = clientQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-    /**
-     * {@code GET  /clients/count} : count all the clients.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
-    @GetMapping("/clients/count")
-    public ResponseEntity<Long> countClients(ClientCriteria criteria) {
-        log.debug("REST request to count Clients by criteria: {}", criteria);
-        return ResponseEntity.ok().body(clientQueryService.countByCriteria(criteria));
+    public Mono<ResponseEntity<List<ClientDTO>>> getAllClients(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        ServerHttpRequest request
+    ) {
+        log.debug("REST request to get a page of Clients");
+        return clientService
+            .countAll()
+            .zipWith(clientService.findAll(pageable).collectList())
+            .map(countWithEntities ->
+                ResponseEntity
+                    .ok()
+                    .headers(
+                        PaginationUtil.generatePaginationHttpHeaders(
+                            UriComponentsBuilder.fromHttpRequest(request),
+                            new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+                        )
+                    )
+                    .body(countWithEntities.getT2())
+            );
     }
 
     /**
@@ -175,9 +202,9 @@ public class ClientResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the clientDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/clients/{id}")
-    public ResponseEntity<ClientDTO> getClient(@PathVariable Long id) {
+    public Mono<ResponseEntity<ClientDTO>> getClient(@PathVariable Long id) {
         log.debug("REST request to get Client : {}", id);
-        Optional<ClientDTO> clientDTO = clientService.findOne(id);
+        Mono<ClientDTO> clientDTO = clientService.findOne(id);
         return ResponseUtil.wrapOrNotFound(clientDTO);
     }
 
@@ -188,12 +215,16 @@ public class ClientResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/clients/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public Mono<ResponseEntity<Void>> deleteClient(@PathVariable Long id) {
         log.debug("REST request to delete Client : {}", id);
-        clientService.delete(id);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
-            .build();
+        return clientService
+            .delete(id)
+            .map(result ->
+                ResponseEntity
+                    .noContent()
+                    .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+                    .build()
+            );
     }
 }

@@ -1,13 +1,12 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.repository.MenuRepository;
-import com.mycompany.myapp.service.MenuQueryService;
 import com.mycompany.myapp.service.MenuService;
-import com.mycompany.myapp.service.criteria.MenuCriteria;
 import com.mycompany.myapp.service.dto.MenuDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,15 +14,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
-import tech.jhipster.web.util.ResponseUtil;
+import tech.jhipster.web.util.reactive.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.mycompany.myapp.domain.Menu}.
@@ -43,12 +48,9 @@ public class MenuResource {
 
     private final MenuRepository menuRepository;
 
-    private final MenuQueryService menuQueryService;
-
-    public MenuResource(MenuService menuService, MenuRepository menuRepository, MenuQueryService menuQueryService) {
+    public MenuResource(MenuService menuService, MenuRepository menuRepository) {
         this.menuService = menuService;
         this.menuRepository = menuRepository;
-        this.menuQueryService = menuQueryService;
     }
 
     /**
@@ -59,16 +61,23 @@ public class MenuResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/menus")
-    public ResponseEntity<MenuDTO> createMenu(@RequestBody MenuDTO menuDTO) throws URISyntaxException {
+    public Mono<ResponseEntity<MenuDTO>> createMenu(@RequestBody MenuDTO menuDTO) throws URISyntaxException {
         log.debug("REST request to save Menu : {}", menuDTO);
         if (menuDTO.getId() != null) {
             throw new BadRequestAlertException("A new menu cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        MenuDTO result = menuService.save(menuDTO);
-        return ResponseEntity
-            .created(new URI("/api/menus/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        return menuService
+            .save(menuDTO)
+            .map(result -> {
+                try {
+                    return ResponseEntity
+                        .created(new URI("/api/menus/" + result.getId()))
+                        .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                        .body(result);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            });
     }
 
     /**
@@ -82,8 +91,10 @@ public class MenuResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/menus/{id}")
-    public ResponseEntity<MenuDTO> updateMenu(@PathVariable(value = "id", required = false) final Long id, @RequestBody MenuDTO menuDTO)
-        throws URISyntaxException {
+    public Mono<ResponseEntity<MenuDTO>> updateMenu(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody MenuDTO menuDTO
+    ) throws URISyntaxException {
         log.debug("REST request to update Menu : {}, {}", id, menuDTO);
         if (menuDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -92,15 +103,23 @@ public class MenuResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!menuRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
+        return menuRepository
+            .existsById(id)
+            .flatMap(exists -> {
+                if (!exists) {
+                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+                }
 
-        MenuDTO result = menuService.save(menuDTO);
-        return ResponseEntity
-            .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, menuDTO.getId().toString()))
-            .body(result);
+                return menuService
+                    .update(menuDTO)
+                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                    .map(result ->
+                        ResponseEntity
+                            .ok()
+                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                            .body(result)
+                    );
+            });
     }
 
     /**
@@ -115,7 +134,7 @@ public class MenuResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/menus/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<MenuDTO> partialUpdateMenu(
+    public Mono<ResponseEntity<MenuDTO>> partialUpdateMenu(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody MenuDTO menuDTO
     ) throws URISyntaxException {
@@ -127,43 +146,55 @@ public class MenuResource {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
-        if (!menuRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
+        return menuRepository
+            .existsById(id)
+            .flatMap(exists -> {
+                if (!exists) {
+                    return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+                }
 
-        Optional<MenuDTO> result = menuService.partialUpdate(menuDTO);
+                Mono<MenuDTO> result = menuService.partialUpdate(menuDTO);
 
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, menuDTO.getId().toString())
-        );
+                return result
+                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                    .map(res ->
+                        ResponseEntity
+                            .ok()
+                            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, res.getId().toString()))
+                            .body(res)
+                    );
+            });
     }
 
     /**
      * {@code GET  /menus} : get all the menus.
      *
      * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
+     * @param request a {@link ServerHttpRequest} request.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of menus in body.
      */
     @GetMapping("/menus")
-    public ResponseEntity<List<MenuDTO>> getAllMenus(MenuCriteria criteria, Pageable pageable) {
-        log.debug("REST request to get Menus by criteria: {}", criteria);
-        Page<MenuDTO> page = menuQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-    /**
-     * {@code GET  /menus/count} : count all the menus.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
-    @GetMapping("/menus/count")
-    public ResponseEntity<Long> countMenus(MenuCriteria criteria) {
-        log.debug("REST request to count Menus by criteria: {}", criteria);
-        return ResponseEntity.ok().body(menuQueryService.countByCriteria(criteria));
+    public Mono<ResponseEntity<List<MenuDTO>>> getAllMenus(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        ServerHttpRequest request,
+        @RequestParam(required = false, defaultValue = "true") boolean eagerload
+    ) {
+        log.debug("REST request to get a page of Menus");
+        return menuService
+            .countAll()
+            .zipWith(menuService.findAll(pageable).collectList())
+            .map(countWithEntities ->
+                ResponseEntity
+                    .ok()
+                    .headers(
+                        PaginationUtil.generatePaginationHttpHeaders(
+                            UriComponentsBuilder.fromHttpRequest(request),
+                            new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+                        )
+                    )
+                    .body(countWithEntities.getT2())
+            );
     }
 
     /**
@@ -173,9 +204,9 @@ public class MenuResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the menuDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/menus/{id}")
-    public ResponseEntity<MenuDTO> getMenu(@PathVariable Long id) {
+    public Mono<ResponseEntity<MenuDTO>> getMenu(@PathVariable Long id) {
         log.debug("REST request to get Menu : {}", id);
-        Optional<MenuDTO> menuDTO = menuService.findOne(id);
+        Mono<MenuDTO> menuDTO = menuService.findOne(id);
         return ResponseUtil.wrapOrNotFound(menuDTO);
     }
 
@@ -186,12 +217,16 @@ public class MenuResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/menus/{id}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public Mono<ResponseEntity<Void>> deleteMenu(@PathVariable Long id) {
         log.debug("REST request to delete Menu : {}", id);
-        menuService.delete(id);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
-            .build();
+        return menuService
+            .delete(id)
+            .map(result ->
+                ResponseEntity
+                    .noContent()
+                    .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+                    .build()
+            );
     }
 }

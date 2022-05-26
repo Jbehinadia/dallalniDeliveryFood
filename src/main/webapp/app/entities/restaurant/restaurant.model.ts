@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs/esm';
 import { IMenu } from 'app/entities/menu/menu.model';
 import { ResponsableRestaurant } from '../responsable-restaurant/responsable-restaurant.model';
 

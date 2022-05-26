@@ -29,7 +29,7 @@
             <column name="date_fermiture" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
-            <column name="responsableRestaurant_id" type="bigint">
+            <column name="responsable_restaurant_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->

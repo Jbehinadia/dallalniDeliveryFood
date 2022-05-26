@@ -49,15 +49,15 @@ public class UserMapper {
             user.setLogin(userDTO.getLogin());
             user.setFirstName(userDTO.getFirstName());
             user.setLastName(userDTO.getLastName());
-            user.setResponsable(userDTO.getResponsable());
-            user.setLivreur(userDTO.getLivreur());
-            user.setClient(userDTO.getClient());
             user.setEmail(userDTO.getEmail());
             user.setImageUrl(userDTO.getImageUrl());
             user.setActivated(userDTO.isActivated());
             user.setLangKey(userDTO.getLangKey());
             Set<Authority> authorities = this.authoritiesFromStrings(userDTO.getAuthorities());
             user.setAuthorities(authorities);
+            user.setResponsable(userDTO.getResponsable());
+            user.setLivreur(userDTO.getLivreur());
+            user.setClient(userDTO.getClient());
             return user;
         }
     }
