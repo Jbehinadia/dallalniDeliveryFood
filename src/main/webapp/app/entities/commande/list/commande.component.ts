@@ -16,6 +16,7 @@ import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { ClientService } from 'app/entities/client/service/client.service';
 import { CommandePourlivreurComponent } from './list-pour-livreur/commande-pour-livreur.component';
+import { listDetailsCommandeComponent } from './list-details-commande/list-details-commande';
 
 @Component({
   selector: 'jhi-commande',
@@ -191,9 +192,13 @@ export class CommandeComponent implements OnInit {
   loadOtherCommandes(): void {
     this.modalRef = this.modalService.open(CommandePourlivreurComponent as Component, { size: 'lg' });
     this.modalRef.componentInstance.parent = this;
-    this.modalRef.componentInstance.client = this.livreur!;
+    this.modalRef.componentInstance.livreur = this.livreur!;
   }
-
+  listCommande(commande: ICommande): void {
+    this.modalRef = this.modalService.open(listDetailsCommandeComponent as Component, { size: 'lg' });
+    this.modalRef.componentInstance.parent = this;
+    this.modalRef.componentInstance.commande = commande!;
+  }
   protected sort(): string[] {
     const result = [this.predicate + ',' + (this.ascending ? ASC : DESC)];
     if (this.predicate !== 'id') {
