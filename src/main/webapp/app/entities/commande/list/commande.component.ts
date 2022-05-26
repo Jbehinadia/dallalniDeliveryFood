@@ -5,9 +5,9 @@ import { combineLatest } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ICommande } from '../commande.model';
+import { CommandeService } from '../service/commande.service';
 
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
-import { CommandeService } from '../service/commande.service';
 import Swals2 from 'sweetalert2';
 import Swal from 'sweetalert2';
 import { LivreurService } from 'app/entities/livreur/service/livreur.service';
@@ -15,6 +15,7 @@ import { ILivreur } from 'app/entities/livreur/livreur.model';
 import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { ClientService } from 'app/entities/client/service/client.service';
+import { CommandePourlivreurComponent } from './list-pour-livreur/commande-pour-livreur.component';
 
 @Component({
   selector: 'jhi-commande',
@@ -22,7 +23,6 @@ import { ClientService } from 'app/entities/client/service/client.service';
 })
 export class CommandeComponent implements OnInit {
   commandes?: ICommande[];
-  otherCommandes?: ICommande[];
   isLoading = false;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -31,6 +31,7 @@ export class CommandeComponent implements OnInit {
   ascending!: boolean;
   ngbPaginationPage = 1;
   livreur: ILivreur = {};
+  modalRef: any;
 
   constructor(
     protected clientService: ClientService,
@@ -188,7 +189,9 @@ export class CommandeComponent implements OnInit {
   }
 
   loadOtherCommandes(): void {
-    this.otherCommandes = [];
+    this.modalRef = this.modalService.open(CommandePourlivreurComponent as Component, { size: 'lg' });
+    this.modalRef.componentInstance.parent = this;
+    this.modalRef.componentInstance.client = this.livreur!;
   }
 
   protected sort(): string[] {
