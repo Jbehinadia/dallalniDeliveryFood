@@ -7,6 +7,7 @@ import { ClientService } from 'app/entities/client/service/client.service';
 import { IClient } from 'app/entities/client/client.model';
 import { ICommande } from '../../commande.model';
 import { CommandeService } from '../../service/commande.service';
+import { listDetailsCommandeComponent } from '../list-details-commande/list-details-commande';
 
 @Component({
   selector: 'jhi-commande-pour-livreur',
@@ -18,6 +19,7 @@ export class CommandePourlivreurComponent implements OnInit {
   parent!: any;
   isLoading = false;
   page?: number;
+  modalRef: any;
 
   constructor(protected clientService: ClientService, protected commandeService: CommandeService, protected modalService: NgbModal) {}
 
@@ -37,5 +39,10 @@ export class CommandePourlivreurComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+  listCommande(commande: ICommande): void {
+    this.modalRef = this.modalService.open(listDetailsCommandeComponent as Component, { size: 'lg' });
+    this.modalRef.componentInstance.parent = this;
+    this.modalRef.componentInstance.commande = commande!;
   }
 }
